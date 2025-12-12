@@ -16,6 +16,7 @@
 8. [Estructura de Carpetas](#8-estructura-de-carpetas)
 9. [Módulos del Sistema](#9-módulos-del-sistema)
 10. [Manejo de Errores](#10-manejo-de-errores)
+11. [Testing](#11-testing)
 
 ---
 
@@ -76,6 +77,7 @@ El propósito principal es proporcionar una herramienta móvil para inversores, 
 - Gestionar estado global con Redux
 - Validar formularios con React Hook Form + Zod
 - Implementar unit tests en lógica crítica
+- Implementar E2E tests en flujos críticos
 
 ---
 
@@ -203,6 +205,7 @@ El propósito principal es proporcionar una herramienta móvil para inversores, 
 - Separación clara por capas (layer-first)
 - Tipado estricto con TypeScript
 - Unit tests en lógica de cálculos y validaciones
+- E2E tests en flujos críticos de usuario
 - Componentes reutilizables
 
 ## 5.3 RNF-003: Usabilidad
@@ -258,8 +261,9 @@ El propósito principal es proporcionar una herramienta móvil para inversores, 
 
 | Tecnología | Propósito |
 |------------|-----------|
-| Jest | Test runner |
+| Jest | Test runner (unit tests) |
 | React Native Testing Library | Testing de componentes |
+| E2E Framework | Testing end-to-end en dispositivos |
 
 ---
 
@@ -464,13 +468,21 @@ quake-wallet/
 │       ├── order.constants.ts
 │       └── index.ts
 │
-└── __tests__/
-    ├── utils/
-    │   ├── calculations.test.ts
-    │   └── formatters.test.ts
-    │
-    └── components/
-        └── OrderForm.test.tsx
+├── __tests__/
+│   ├── unit/
+│   │   ├── calculations.test.ts
+│   │   └── formatters.test.ts
+│   │
+│   └── components/
+│       └── OrderForm.test.tsx
+│
+└── e2e/
+    ├── instruments.e2e.ts
+    ├── portfolio.e2e.ts
+    ├── search.e2e.ts
+    ├── orders.e2e.ts
+    └── flows/
+        └── buy-order.e2e.ts
 ```
 
 ---
@@ -491,15 +503,54 @@ Mostrar listado de instrumentos financieros disponibles con sus precios y retorn
 | InstrumentList | Lista scrolleable de instrumentos |
 | InstrumentCard | Card individual con datos del instrumento |
 
+### API Endpoint
+
+```
+GET https://dummy-api-topaz.vercel.app/instruments
+```
+
 ### Datos Requeridos (API Response)
 
 ```typescript
 interface Instrument {
+  id: number;
   ticker: string;
   name: string;
+  type: 'ACCIONES' | 'MONEDA';
   last_price: number;
   close_price: number;
 }
+```
+
+**Ejemplo de respuesta:**
+
+```json
+[
+  {
+    "id": 1,
+    "ticker": "DYCA",
+    "name": "Dycasa S.A.",
+    "type": "ACCIONES",
+    "last_price": 45.72,
+    "close_price": 50.07
+  },
+  {
+    "id": 2,
+    "ticker": "CAPX",
+    "name": "Capex S.A.",
+    "type": "ACCIONES",
+    "last_price": 53.68,
+    "close_price": 49.71
+  },
+  {
+    "id": 11,
+    "ticker": "GAMI",
+    "name": "Boldt Gaming S.A.",
+    "type": "ACCIONES",
+    "last_price": 97.56,
+    "close_price": 88.31
+  }
+]
 ```
 
 ### Cálculos
@@ -527,15 +578,54 @@ Mostrar las posiciones del usuario con valor de mercado y rendimiento.
 | PositionList | Lista de posiciones |
 | PositionCard | Card con datos de posición |
 
+### API Endpoint
+
+```
+GET https://dummy-api-topaz.vercel.app/portfolio
+```
+
 ### Datos Requeridos (API Response)
 
 ```typescript
 interface Position {
+  instrument_id: number;
   ticker: string;
   quantity: number;
-  avg_cost_price: number;
   last_price: number;
+  close_price: number;
+  avg_cost_price: number;
 }
+```
+
+**Ejemplo de respuesta:**
+
+```json
+[
+  {
+    "instrument_id": 13,
+    "ticker": "INTR",
+    "quantity": 4,
+    "last_price": 84.27,
+    "close_price": 76.57,
+    "avg_cost_price": 94.66
+  },
+  {
+    "instrument_id": 18,
+    "ticker": "HARG",
+    "quantity": 42,
+    "last_price": 78.25,
+    "close_price": 71.13,
+    "avg_cost_price": 13.57
+  },
+  {
+    "instrument_id": 15,
+    "ticker": "FIPL",
+    "quantity": 57,
+    "last_price": 85.96,
+    "close_price": 78.15,
+    "avg_cost_price": 27.47
+  }
+]
 ```
 
 ### Cálculos
@@ -578,10 +668,49 @@ Permitir búsqueda de instrumentos por ticker.
 | SearchInput | Input con debounce |
 | SearchResults | Lista de resultados filtrados |
 
+### API Endpoint
+
+```
+GET https://dummy-api-topaz.vercel.app/search?query={ticker}
+```
+
+### Datos Requeridos (API Response)
+
+```typescript
+// Misma estructura que Instrument
+interface SearchResult {
+  id: number;
+  ticker: string;
+  name: string;
+  type: 'ACCIONES' | 'MONEDA';
+  last_price: number;
+  close_price: number;
+}
+```
+
+**Ejemplo de request y respuesta:**
+
+```
+GET /search?query=DYC
+```
+
+```json
+[
+  {
+    "id": 1,
+    "ticker": "DYCA",
+    "name": "Dycasa S.A.",
+    "type": "ACCIONES",
+    "last_price": 45.72,
+    "close_price": 50.07
+  }
+]
+```
+
 ### Lógica
 
 - Debounce de 300ms en input
-- Filtro case-insensitive por ticker
+- Query parameter enviado al endpoint
 - Reutiliza InstrumentCard para resultados
 
 ---
@@ -601,6 +730,12 @@ Permitir envío de órdenes de compra/venta.
 | OrderTypeSelector | Selector BUY/SELL y MARKET/LIMIT |
 | QuantityInput | Input cantidad o monto |
 | OrderResponse | Muestra id y status de respuesta |
+
+### API Endpoint
+
+```
+POST https://dummy-api-topaz.vercel.app/orders
+```
 
 ### Schema de Validación (Zod)
 
@@ -623,11 +758,34 @@ export const orderSchema = z.object({
 
 ```typescript
 interface OrderRequest {
-  instrument_id: string;
+  instrument_id: number;
   side: 'BUY' | 'SELL';
   type: 'MARKET' | 'LIMIT';
   quantity: number;
   price?: number; // Solo para LIMIT
+}
+```
+
+**Ejemplo body orden MARKET:**
+
+```json
+{
+  "instrument_id": 1,
+  "side": "BUY",
+  "type": "MARKET",
+  "quantity": 1234
+}
+```
+
+**Ejemplo body orden LIMIT:**
+
+```json
+{
+  "instrument_id": 1,
+  "side": "SELL",
+  "type": "LIMIT",
+  "quantity": 123,
+  "price": 84.5
 }
 ```
 
@@ -716,6 +874,171 @@ interface ErrorMessageProps {
 
 ---
 
+# 11. TESTING
+
+## 11.1 Estrategia de Testing
+
+El proyecto implementa dos niveles de testing:
+
+| Nivel | Propósito | Cobertura |
+|-------|-----------|-----------|
+| **Unit Tests** | Validar lógica de negocio aislada | Cálculos, formatters, schemas |
+| **E2E Tests** | Validar flujos críticos de usuario | Navegación, órdenes, interacciones |
+
+## 11.2 Unit Tests
+
+### Archivos a Testear
+
+| Archivo | Funciones |
+|---------|-----------|
+| `calculations/returns.ts` | `calculateReturn` |
+| `calculations/portfolio.ts` | `calculateMarketValue`, `calculateProfit`, `calculateProfitPercentage` |
+| `calculations/orders.ts` | `calculateQuantityFromAmount` |
+| `formatters/currency.ts` | `formatCurrency`, `formatPercentage` |
+| `schemas/order.schema.ts` | Validaciones de orden |
+
+### Ejemplo de Test
+
+```typescript
+// calculations.test.ts
+describe('calculateReturn', () => {
+  it('should calculate positive return correctly', () => {
+    expect(calculateReturn(110, 100)).toBe(10);
+  });
+
+  it('should calculate negative return correctly', () => {
+    expect(calculateReturn(90, 100)).toBe(-10);
+  });
+});
+
+describe('calculateQuantityFromAmount', () => {
+  it('should floor the result (no fractional shares)', () => {
+    expect(calculateQuantityFromAmount(1000, 45.72)).toBe(21);
+  });
+});
+```
+
+## 11.3 E2E Tests
+
+### Flujos Críticos a Testear
+
+Los E2E tests cubren los flujos más importantes para el usuario:
+
+| Test | Descripción | Prioridad |
+|------|-------------|-----------|
+| **Visualización de Instrumentos** | La lista de instrumentos carga y muestra datos correctamente | Alta |
+| **Visualización de Portfolio** | Las posiciones se muestran con cálculos correctos | Alta |
+| **Búsqueda de Activos** | El buscador filtra y muestra resultados | Alta |
+| **Flujo de Orden MARKET** | Usuario completa una orden MARKET exitosamente | Crítica |
+| **Flujo de Orden LIMIT** | Usuario completa una orden LIMIT exitosamente | Crítica |
+| **Validación de Formulario** | El formulario muestra errores de validación | Alta |
+| **Navegación entre Tabs** | Usuario navega entre las 3 pantallas principales | Media |
+
+### Especificación de E2E Tests
+
+#### E2E-001: Instruments Screen
+
+```
+Escenario: Usuario visualiza lista de instrumentos
+  Dado que la app está abierta
+  Cuando el usuario está en el tab "Instruments"
+  Entonces debe ver una lista de instrumentos
+  Y cada instrumento muestra ticker, nombre, precio y retorno
+  Y los retornos positivos se muestran en verde
+  Y los retornos negativos se muestran en rojo
+```
+
+#### E2E-002: Portfolio Screen
+
+```
+Escenario: Usuario visualiza su portafolio
+  Dado que la app está abierta
+  Cuando el usuario navega al tab "Portfolio"
+  Entonces debe ver sus posiciones
+  Y cada posición muestra ticker, cantidad, valor de mercado
+  Y muestra la ganancia/pérdida en pesos
+  Y muestra el rendimiento en porcentaje
+```
+
+#### E2E-003: Search
+
+```
+Escenario: Usuario busca un instrumento
+  Dado que el usuario está en el tab "Search"
+  Cuando ingresa "DYC" en el buscador
+  Y espera que se complete la búsqueda
+  Entonces debe ver "DYCA" en los resultados
+```
+
+#### E2E-004: Order Flow - MARKET BUY
+
+```
+Escenario: Usuario envía orden de compra MARKET
+  Dado que el usuario está en la lista de instrumentos
+  Cuando hace tap en un instrumento
+  Entonces se abre el modal de órdenes
+  
+  Cuando selecciona "BUY"
+  Y selecciona "MARKET"
+  Y ingresa cantidad "10"
+  Y presiona "Enviar Orden"
+  
+  Entonces debe ver el ID de la orden
+  Y el status debe ser "FILLED" o "REJECTED"
+```
+
+#### E2E-005: Order Flow - LIMIT SELL
+
+```
+Escenario: Usuario envía orden de venta LIMIT
+  Dado que el modal de órdenes está abierto
+  Cuando selecciona "SELL"
+  Y selecciona "LIMIT"
+  Y ingresa cantidad "5"
+  Y ingresa precio "85.50"
+  Y presiona "Enviar Orden"
+  
+  Entonces debe ver el ID de la orden
+  Y el status debe ser "PENDING" o "REJECTED"
+```
+
+#### E2E-006: Order Validation
+
+```
+Escenario: Validación de campos requeridos
+  Dado que el modal de órdenes está abierto
+  Cuando selecciona "LIMIT"
+  Y deja el campo precio vacío
+  Y presiona "Enviar Orden"
+  
+  Entonces debe ver mensaje de error "Price is required for LIMIT orders"
+```
+
+#### E2E-007: Order by Amount
+
+```
+Escenario: Usuario ingresa monto en lugar de cantidad
+  Dado que el modal de órdenes está abierto para instrumento con precio $45.72
+  Cuando el usuario selecciona "Ingresar por monto"
+  Y ingresa "$1000"
+  
+  Entonces el campo cantidad debe mostrar "21" (floor de 1000/45.72)
+```
+
+### Estructura de Tests E2E
+
+```
+e2e/
+├── instruments.e2e.ts      # Tests de pantalla Instruments
+├── portfolio.e2e.ts        # Tests de pantalla Portfolio
+├── search.e2e.ts           # Tests de búsqueda
+├── orders.e2e.ts           # Tests de modal y validaciones
+└── flows/
+    └── buy-order.e2e.ts    # Flujo completo de compra
+```
+
+---
+
 # APÉNDICES
 
 ## A. Tipos Principales
@@ -739,19 +1062,17 @@ export const ORDER_SIDES = ['BUY', 'SELL'] as const;
 export const ORDER_TYPES = ['MARKET', 'LIMIT'] as const;
 
 // api.constants.ts
-export const API_BASE_URL = 'https://api.example.com';
+export const API_BASE_URL = 'https://dummy-api-topaz.vercel.app';
 export const DEBOUNCE_MS = 300;
 ```
 
-## C. Tests Prioritarios
+## C. API Endpoints Summary
 
-| Archivo | Cobertura |
-|---------|-----------|
-| calculations/returns.ts | calculateReturn |
-| calculations/portfolio.ts | calculateMarketValue, calculateProfit, calculateProfitPercentage |
-| calculations/orders.ts | calculateQuantityFromAmount |
-| schemas/order.schema.ts | Validación de órdenes |
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/instruments` | Lista de instrumentos |
+| GET | `/portfolio` | Posiciones del usuario |
+| GET | `/search?query={ticker}` | Búsqueda por ticker |
+| POST | `/orders` | Crear orden |
 
 ---
-
-> **Nota**: Este documento corresponde al MVP. Funcionalidades adicionales como News, E2E testing, y Design System se considerarán en futuras iteraciones.
