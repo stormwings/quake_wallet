@@ -150,7 +150,12 @@ El propósito principal es proporcionar una herramienta móvil para inversores, 
 ### RF-002.1 Listado de Posiciones
 
 - Obtener posiciones del usuario desde endpoint GET
-- Mostrar para cada posición: ticker, cantidad
+- Mostrar para cada posición:
+  - Ticker
+  - Cantidad de la posición
+  - Valor de mercado
+  - Ganancia total ($)
+  - Rendimiento total (%)
 
 ### RF-002.2 Cálculos de Rendimiento
 
@@ -190,7 +195,15 @@ El propósito principal es proporcionar una herramienta móvil para inversores, 
   - MARKET → FILLED o REJECTED
   - LIMIT → PENDING o REJECTED
 
-### RF-004.4 Validaciones
+### RF-004.4 Definición de Estados
+
+| Estado | Descripción |
+|--------|-------------|
+| **PENDING** | Cuando una orden LIMIT es enviada al mercado, se envía con este estado. La orden queda esperando ejecución. |
+| **FILLED** | Cuando una orden se ejecuta. Las órdenes MARKET son ejecutadas inmediatamente al ser enviadas. |
+| **REJECTED** | Cuando la orden es rechazada por el mercado porque no cumple con los requerimientos (ej: monto mayor al disponible). |
+
+### RF-004.5 Validaciones
 
 - Cantidad debe ser mayor a 0
 - Precio límite requerido solo para órdenes LIMIT
