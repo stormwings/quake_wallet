@@ -1,50 +1,73 @@
-# Welcome to your Expo app 👋
+# Quake Wallet
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil desarrollada en React Native para visualizar instrumentos financieros, gestionar portafolios de inversión y enviar órdenes de compra/venta al mercado.
 
-## Get started
+## Descripción
 
-1. Install dependencies
+Quake Wallet permite a los inversores:
+- Visualizar instrumentos financieros con precios y retornos en tiempo real
+- Consultar su portafolio personal con ganancias y rendimientos
+- Buscar activos por ticker
+- Enviar órdenes de compra y venta (MARKET y LIMIT)
+- Monitorear el estado de las órdenes enviadas
 
-   ```bash
-   npm install
-   ```
+## Stack Tecnológico
 
-2. Start the app
+- **React Native** con Expo
+- **TypeScript** para tipado estático
+- **Redux Toolkit** para gestión de estado
+- **React Hook Form + Zod** para formularios y validación
+- **Axios** para llamadas HTTP
+- **Jest** y **React Native Testing Library** para testing
 
-   ```bash
-   npx expo start
-   ```
+## Documentación
 
-In the output, you'll find options to open the app in a
+- [Requerimientos](./01_requerimientos.md) - Especificaciones iniciales del proyecto
+- [Plan del Proyecto](./02_project_plan.md) - Documentación técnica completa
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Instalación
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Desarrollo
 
-## Learn more
+```bash
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Opciones para ejecutar la app:
+- Presiona `a` para Android emulator
+- Presiona `i` para iOS simulator
+- Escanea el QR con Expo Go en tu dispositivo
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Estructura del Proyecto
 
-## Join the community
+El proyecto sigue una arquitectura **Layer-First**:
+- `src/components/` - Componentes UI reutilizables
+- `src/screens/` - Pantallas principales
+- `src/store/` - Estado global con Redux
+- `src/services/` - Llamadas a API
+- `src/utils/` - Funciones utilitarias
+- `src/types/` - Definiciones de TypeScript
 
-Join our community of developers creating universal apps.
+## Testing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+# Unit tests
+npm test
+
+# E2E tests
+npm run test:e2e
+```
+
+## API Backend
+
+El proyecto se conecta a: `https://dummy-api-topaz.vercel.app`
+
+Endpoints disponibles:
+- `GET /instruments` - Lista de instrumentos
+- `GET /portfolio` - Portafolio del usuario
+- `GET /search?query={ticker}` - Búsqueda de activos
+- `POST /orders` - Crear orden de compra/venta
