@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import {
+  KeyboardAvoidingView,
   Modal,
-  View,
-  Text,
-  TouchableOpacity,
+  Platform,
   ScrollView,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { createOrder, clearResponse } from '../../store/slices';
+import { clearResponse, createOrder } from '../../store/slices';
 import { Instrument, OrderRequest } from '../../types';
 import { OrderForm } from './OrderForm';
 import { OrderResponse } from './OrderResponse';
@@ -132,6 +132,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
+    width: '100%',
+    minHeight: 260,
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -172,9 +174,7 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontWeight: '600',
   },
-  content: {
-    flex: 1,
-  },
+  content: {},
   contentContainer: {
     padding: 20,
     paddingBottom: 40,

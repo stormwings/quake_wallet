@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { SearchInput, SearchResults } from '../components';
+import { View, StyleSheet } from 'react-native';
+import { SearchInput, SearchResults, OrderModal } from '../components';
 import { useDebounce } from '../hooks';
 import { instrumentsApi } from '../services';
 import { Instrument } from '../types';
@@ -9,6 +9,8 @@ export default function SearchScreen() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Instrument[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
 
@@ -37,12 +39,13 @@ export default function SearchScreen() {
   }, [debouncedQuery]);
 
   const handleResultPress = (instrument: Instrument) => {
-    // TODO: Abrir modal de órdenes con el instrumento seleccionado
-    Alert.alert(
-      'Instrumento seleccionado',
-      `${instrument.ticker} - ${instrument.name}\nPrecio: $${instrument.last_price}`,
-      [{ text: 'OK' }]
-    );
+    setSelectedInstrument(instrument);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedInstrument(null);
   };
 
   return (
@@ -57,6 +60,12 @@ export default function SearchScreen() {
         loading={loading}
         query={debouncedQuery}
         onResultPress={handleResultPress}
+      />
+
+      <OrderModal
+        visible={modalVisible}
+        onClose={handleCloseModal}
+        instrument={selectedInstrument}
       />
     </View>
   );

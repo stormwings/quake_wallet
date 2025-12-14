@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { calculateQuantityFromAmount } from '../../utils/calculations';
 import { formatCurrency } from '../../utils/formatters';
 
