@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { instrumentsReducer, portfolioReducer } from './slices';
+import { instrumentsReducer, portfolioReducer, ordersReducer } from './slices';
 
 export const store = configureStore({
   reducer: {
     instruments: instrumentsReducer,
     portfolio: portfolioReducer,
+    orders: ordersReducer,
   },
 });
 
