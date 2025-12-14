@@ -1,40 +1,72 @@
-import React, { useEffect } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
-import { InstrumentCard } from '../components/instruments';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, View, RefreshControl } from 'react-native';
+import { InstrumentCard, Loading, ErrorMessage, OrderModal } from '../components';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchInstruments } from '../store/slices';
+import { Instrument } from '../types';
 
 export default function InstrumentsScreen() {
   const dispatch = useAppDispatch();
-  const { data, loading, error } = useAppSelector((state) => state.instruments);
+  const { data: instruments, loading, error } = useAppSelector((state) => state.instruments);
+
+  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     dispatch(fetchInstruments());
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
+  const handleRefresh = () => {
+    dispatch(fetchInstruments());
+  };
+
+  const handleRetry = () => {
+    dispatch(fetchInstruments());
+  };
+
+  const handleInstrumentPress = (instrument: Instrument) => {
+    setSelectedInstrument(instrument);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedInstrument(null);
+  };
+
+  if (loading && !instruments) {
+    return <Loading />;
   }
 
-  if (error) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-      </View>
-    );
+  if (error && !instruments) {
+    return <ErrorMessage message={error} onRetry={handleRetry} />;
   }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={instruments}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <InstrumentCard instrument={item} />}
+        renderItem={({ item }) => (
+          <InstrumentCard
+            instrument={item}
+            onPress={() => handleInstrumentPress(item)}
+          />
+        )}
         contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={handleRefresh}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      />
+
+      <OrderModal
+        visible={modalVisible}
+        onClose={handleCloseModal}
+        instrument={selectedInstrument}
       />
     </View>
   );
@@ -43,18 +75,9 @@ export default function InstrumentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#f9fafb',
   },
   list: {
-    padding: 16,
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 16,
+    paddingVertical: 8,
   },
 });
