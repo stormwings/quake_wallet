@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '../../constants';
 import { Position } from '../../types';
 
 export const portfolioApi = {
-  getPositions: async (): Promise<Position[]> => {
+  getAll: async (): Promise<Position[]> => {
     const response = await apiClient.get<Position[]>(API_ENDPOINTS.PORTFOLIO);
     return response.data;
   },
