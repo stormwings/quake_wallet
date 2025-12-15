@@ -1,0 +1,5 @@
+appId: host.exp.exponent
+---
+# Test configuration
+env:
+  API_URL: https://dummy-api-topaz.vercel.app

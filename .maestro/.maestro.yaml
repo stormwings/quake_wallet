@@ -1,0 +1,22 @@
+# Maestro Test Suite Configuration
+#
+# Este archivo permite ejecutar tests de forma organizada.
+# Usa "maestro test .maestro" para correr todos los tests en orden.
+#
+# Estructura:
+# 1. Tests individuales por módulo (screen-level tests)
+# 2. Tests de integración (flows completos)
+#
+# Para ejecutar:
+#   - Todos los tests: maestro test .maestro
+#   - Solo módulos: maestro test .maestro/instruments.yaml .maestro/portfolio.yaml .maestro/search.yaml .maestro/orders.yaml
+#   - Solo flows: maestro test .maestro/flows/
+
+# Los tests se ejecutarán en orden alfabético por defecto
+# Si necesitas orden específico, puedes usar el flag --include-tags
+
+# Tags sugeridos (agregar en cada archivo):
+# - @smoke: Tests críticos que deben pasar siempre
+# - @module: Tests de módulos individuales
+# - @flow: Tests de flujos completos
+# - @regression: Suite completa de regresión
