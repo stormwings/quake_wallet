@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+echo ""
+
+# Run ESLint
+echo "▶ Running ESLint..."
+npm run lint
+LINT_EXIT_CODE=$?
+
+# Run tests
+echo ""
+echo "▶ Running tests..."
+npm test
+TEST_EXIT_CODE=$?
+
+# Show results
+echo ""
+echo "=========================================="
+if [ $LINT_EXIT_CODE -ne 0 ] || [ $TEST_EXIT_CODE -ne 0 ]; then
+  echo "⚠️  WARNING: Push completed with errors!"
+  echo "=========================================="
+
+  if [ $LINT_EXIT_CODE -ne 0 ]; then
+    echo "❌ ESLint found issues"
+  fi
+
+  if [ $TEST_EXIT_CODE -ne 0 ]; then
+    echo "❌ Tests failed"
+  fi
+
+  echo ""
+  echo "Please fix these issues before the next push."
+  echo "=========================================="
+else
+  echo "✅ All checks passed!"
+  echo "=========================================="
+fi
+
+# Always exit 0 to allow push (non-blocking)
+exit 0
