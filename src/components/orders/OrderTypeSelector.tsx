@@ -15,7 +15,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   onSideChange,
   type,
   onTypeChange,
-    }) => {
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.section}>

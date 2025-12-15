@@ -18,16 +18,16 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
   const isPositive = returnValue >= 0;
 
   return (
-      <TouchableOpacity
-        testID={`instrument-card-${instrument.ticker}`}
-        accessible={true}
-        accessibilityLabel={copy.instruments.accessibilityLabel(
-          instrument.ticker
-        )}
-        style={styles.row}
-        onPress={onPress}
-        activeOpacity={0.85}
-      >
+    <TouchableOpacity
+      testID={`instrument-card-${instrument.ticker}`}
+      accessible={true}
+      accessibilityLabel={copy.instruments.accessibilityLabel(
+        instrument.ticker
+      )}
+      style={styles.row}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
       <View style={styles.left}>
         <View style={styles.iconCircle} testID="instrument-card-icon">
           <Text style={styles.iconText}>{instrument.ticker?.slice(0, 2)}</Text>
