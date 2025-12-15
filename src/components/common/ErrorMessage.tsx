@@ -1,15 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { getUserMessage } from '../../errors';
 
 interface ErrorMessageProps {
-  message: string;
+  message?: string;
+  error?: unknown;
   onRetry?: () => void;
 }
 
-export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
+export function ErrorMessage({ message, error, onRetry }: ErrorMessageProps) {
+  const display = message ?? (error ? getUserMessage(error) : 'Ocurrió un error.');
+
   return (
     <View testID="error-message" style={styles.container}>
-      <Text style={styles.errorText}>{message}</Text>
+      <Text style={styles.errorText}>{display}</Text>
       {onRetry && (
         <TouchableOpacity
           testID="error-retry-button"
