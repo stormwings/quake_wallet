@@ -41,7 +41,7 @@ appId: host.exp.exponent
 
 # Tap en el tab de Search
 - tapOn:
-    text: "Search"
+    text: "Buscar"
 
 - waitForAnimationToEnd:
     timeout: 1000
@@ -71,7 +71,7 @@ appId: host.exp.exponent
     id: "search-input"
 
 # Escribir el ticker
-- inputText: "AAPL"
+- inputText: "DYCA"
 
 # Esperar debounce (300ms) + carga de resultados
 - waitForAnimationToEnd:
