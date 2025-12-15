@@ -19,6 +19,8 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
   return (
     <TouchableOpacity
       testID={`instrument-card-${instrument.ticker}`}
+      accessible={true}
+      accessibilityLabel={`Instrument ${instrument.ticker}`}
       style={styles.row}
       onPress={onPress}
       activeOpacity={0.85}

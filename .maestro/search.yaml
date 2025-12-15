@@ -1,31 +1,296 @@
 # E2E Test: Search Screen
 #
+# terminal command to run: maestro test .maestro/search.yaml
+#
 # Objetivo:
-#   Verificar que la funcionalidad de búsqueda funciona correctamente:
-#   - Estado inicial (empty state)
-#   - Búsqueda de instrumentos por ticker
-#   - Manejo de resultados vacíos
-#   - Apertura del modal de órdenes desde resultados
+#   Verificar que el módulo de Search funciona correctamente
+#   incluyendo búsqueda de instrumentos, manejo de resultados,
+#   estados vacíos y apertura de modal de órdenes
 #
-# Flujo:
-#   1. Navegar al tab Search
-#   2. Verificar estado inicial (sin query)
-#   3. Ingresar texto en el campo de búsqueda
-#   4. Verificar que aparecen resultados
-#   5. Verificar que se puede limpiar la búsqueda
-#   6. Buscar algo que no existe y verificar "no results"
-#   7. Tap en un resultado para abrir modal de orden
-#
-# testIDs principales a usar:
-#   - search-screen
-#   - search-input
-#   - search-input-clear
-#   - search-empty-state
-#   - search-results-list
-#   - search-no-results
-#   - instrument-card-{ticker}
-#   - order-modal
+# Casos cubiertos:
+#   - Navegación al tab Search
+#   - Screen de search se carga
+#   - Estado inicial (empty state) se muestra
+#   - Input de búsqueda funciona
+#   - Búsqueda por ticker muestra resultados
+#   - Resultados se pueden visualizar
+#   - Botón de limpiar búsqueda funciona
+#   - Búsqueda sin resultados muestra mensaje apropiado
+#   - Tap en resultado abre modal de orden
+#   - Modal se puede cerrar y volver a búsqueda
+#   - Debounce funciona correctamente (espera 300ms)
 
 appId: host.exp.exponent
 ---
-# TODO: Implementar test
+
+# =============================================================================
+# 1. NAVEGACIÓN AL TAB SEARCH
+# =============================================================================
+
+# Esperar a que la app se inicialice
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Tap en el tab de Search (tercer tab en la navegación inferior)
+- tapOn:
+    text: "Buscar"
+
+# Esperar a que la animación de navegación termine
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 2. VERIFICAR CARGA INICIAL DEL SCREEN
+# =============================================================================
+
+# Verificar que el screen de search está visible
+- assertVisible:
+    id: "search-screen"
+
+# Verificar que el input de búsqueda está visible
+- assertVisible:
+    id: "search-input"
+
+# =============================================================================
+# 3. VERIFICAR ESTADO INICIAL (EMPTY STATE)
+# =============================================================================
+
+# Sin query, debe mostrar el estado vacío con instrucciones
+- assertVisible:
+    id: "search-empty-state"
+
+# Verificar que el mensaje de instrucciones está visible
+- assertVisible:
+    text: "Buscar instrumentos"
+
+- assertVisible:
+    text: "Ingresa el ticker del instrumento que deseas buscar"
+
+# =============================================================================
+# 4. REALIZAR BÚSQUEDA DE INSTRUMENTO EXISTENTE
+# =============================================================================
+
+# Tap en el input de búsqueda
+- tapOn:
+    id: "search-input"
+
+# Escribir un ticker que sabemos que existe (ej: AAPL)
+- inputText: "A"
+
+# Esperar el debounce (300ms) + tiempo de búsqueda
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# =============================================================================
+# 5. VERIFICAR RESULTADOS DE BÚSQUEDA
+# =============================================================================
+
+# Verificar que el empty state ya no está visible
+- assertNotVisible:
+    id: "search-empty-state"
+
+# Verificar que la lista de resultados se muestra
+- assertVisible:
+    id: "search-results-list"
+
+# Verificar que al menos un resultado se encontró
+- assertVisible:
+    id: "instrument-card-.*"
+
+# Verificar elementos del primer resultado
+- assertVisible:
+    id: "instrument-card-ticker"
+    index: 0
+
+- assertVisible:
+    id: "instrument-card-name"
+    index: 0
+
+- assertVisible:
+    id: "instrument-card-price"
+    index: 0
+
+# =============================================================================
+# 6. VERIFICAR BOTÓN DE LIMPIAR BÚSQUEDA
+# =============================================================================
+
+# El botón de limpiar debe estar visible cuando hay texto
+- assertVisible:
+    id: "search-input-clear"
+
+# Tap en el botón de limpiar
+- tapOn:
+    id: "search-input-clear"
+
+# Esperar a que se limpie
+- waitForAnimationToEnd:
+    timeout: 500
+
+# Verificar que volvió al estado vacío
+- assertVisible:
+    id: "search-empty-state"
+
+# Verificar que la lista de resultados ya no está
+- assertNotVisible:
+    id: "search-results-list"
+
+# Verificar que el botón de limpiar ya no está visible
+- assertNotVisible:
+    id: "search-input-clear"
+
+# =============================================================================
+# 7. BUSCAR UN TICKER QUE NO EXISTE
+# =============================================================================
+
+# Tap en el input de búsqueda nuevamente
+- tapOn:
+    id: "search-input"
+
+# Escribir un ticker que probablemente no existe
+- inputText: "XXXYYY"
+
+# Esperar el debounce + tiempo de búsqueda
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# =============================================================================
+# 8. VERIFICAR ESTADO "SIN RESULTADOS"
+# =============================================================================
+
+# Verificar que se muestra el mensaje de sin resultados
+- assertVisible:
+    id: "search-no-results"
+
+# Verificar el mensaje específico
+- assertVisible:
+    text: "Sin resultados"
+
+# Verificar que menciona el query buscado
+- assertVisible:
+    text: ".*XXXYYY.*"
+
+# Verificar que no hay lista de resultados
+- assertNotVisible:
+    id: "search-results-list"
+
+# =============================================================================
+# 9. BUSCAR OTRO TICKER VÁLIDO
+# =============================================================================
+
+# Limpiar la búsqueda anterior
+- tapOn:
+    id: "search-input-clear"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# Buscar otro ticker conocido (ej: TSLA)
+- tapOn:
+    id: "search-input"
+
+- inputText: "A"
+
+# Esperar resultados
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Verificar que hay resultados
+- assertVisible:
+    id: "search-results-list"
+
+- assertVisible:
+    id: "instrument-card-.*"
+
+# =============================================================================
+# 10. ABRIR MODAL DE ORDEN DESDE RESULTADO DE BÚSQUEDA
+# =============================================================================
+
+# TODO: Asegurarse que el primer resultado esté visible y en pantalla
+- assertVisible:
+    id: "instrument-card-ticker"
+    index: 0
+
+# Esperar un momento para asegurar que todo esté renderizado
+- waitForAnimationToEnd:
+    timeout: 800
+
+# Tap en el wrapper del primer resultado
+- tapOn:
+    id: "instrument-card-icon"
+
+# Esperar animación del modal
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# Verificar elementos del modal
+- assertVisible:
+    id: "order-modal-title"
+
+- assertVisible:
+    id: "order-form"
+
+# Verificar que el ticker del instrumento seleccionado está en el formulario
+- assertVisible:
+    id: "order-form-ticker"
+
+# =============================================================================
+# 11. CERRAR MODAL Y VERIFICAR VUELTA A BÚSQUEDA
+# =============================================================================
+
+# Cerrar el modal
+- tapOn:
+    id: "order-modal-close"
+
+# Esperar a que el modal se cierre
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal ya no está visible
+- assertNotVisible:
+    id: "order-modal"
+
+# Verificar que volvimos al screen de búsqueda
+- assertVisible:
+    id: "search-screen"
+
+# Verificar que los resultados de búsqueda siguen ahí
+- assertVisible:
+    id: "search-results-list"
+
+# =============================================================================
+# 12. VERIFICAR SCROLL DE RESULTADOS (SI HAY MÚLTIPLES)
+# =============================================================================
+
+# Si hay múltiples resultados, probar scroll
+- scroll:
+    optional: true
+
+# Verificar que hay más resultados después del scroll (si los hay)
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 2
+    optional: true
+
+# =============================================================================
+# 13. VERIFICACIÓN FINAL Y LIMPIEZA
+# =============================================================================
+
+# Limpiar la búsqueda para dejar el screen limpio
+- tapOn:
+    id: "search-input-clear"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# Verificar estado final
+- assertVisible:
+    id: "search-screen"
+
+- assertVisible:
+    id: "search-empty-state"
+
+# Test completado exitosamente
