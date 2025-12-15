@@ -1,12 +1,21 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { OrderFormData, orderSchema } from '../../schemas';
-import { Instrument, OrderRequest } from '../../types';
-import { formatCurrency } from '../../utils/formatters';
-import { OrderTypeSelector } from './OrderTypeSelector';
-import { QuantityInput } from './QuantityInput';
+import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { OrderFormData, orderSchema } from "../../schemas";
+import { Instrument, OrderRequest } from "../../types";
+import { formatCurrency } from "../../utils/formatters";
+import { OrderTypeSelector } from "./OrderTypeSelector";
+import { QuantityInput } from "./QuantityInput";
 
 interface OrderFormProps {
   instrument: Instrument;
@@ -19,29 +28,29 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   instrument,
   onSubmit,
   onCancel,
-  loading = false
+  loading = false,
 }) => {
   const {
     control,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors }
+    formState: { errors },
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      side: 'BUY',
-      type: 'MARKET',
+      side: "BUY",
+      type: "MARKET",
       quantity: 0,
-      price: undefined
-    }
+      price: undefined,
+    },
   });
 
-  const watchedType = watch('type');
-  const watchedSide = watch('side');
-  const watchedQuantity = watch('quantity');
+  const watchedType = watch("type");
+  const watchedSide = watch("side");
+  const watchedQuantity = watch("quantity");
 
-  const [priceText, setPriceText] = useState('');
+  const [priceText, setPriceText] = useState("");
 
   const handleFormSubmit = (data: OrderFormData) => {
     const orderData: OrderRequest = {
@@ -49,7 +58,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       side: data.side,
       type: data.type,
       quantity: data.quantity,
-      ...(data.type === 'LIMIT' && { price: data.price })
+      ...(data.type === "LIMIT" && { price: data.price }),
     };
     onSubmit(orderData);
   };
@@ -57,34 +66,40 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   const handlePriceChange = (text: string) => {
     setPriceText(text);
     const value = parseFloat(text);
-    if (!isNaN(value) && value > 0) {
-      setValue('price', value, { shouldValidate: true });
-    } else {
-      setValue('price', undefined, { shouldValidate: true });
-    }
+    if (!isNaN(value) && value > 0)
+      setValue("price", value, { shouldValidate: true });
+    else setValue("price", undefined, { shouldValidate: true });
   };
 
-  const totalEstimated = watchedType === 'MARKET'
-    ? watchedQuantity * instrument.last_price
-    : watchedType === 'LIMIT' && priceText
-    ? watchedQuantity * parseFloat(priceText)
-    : 0;
+  const totalEstimated =
+    watchedType === "MARKET"
+      ? watchedQuantity * instrument.last_price
+      : watchedType === "LIMIT" && priceText
+      ? watchedQuantity * parseFloat(priceText)
+      : 0;
+
+  const submitLabel = watchedSide === "BUY" ? "Comprar" : "Vender";
 
   return (
     <View style={styles.container}>
-      {/* Instrument Info */}
-      <View style={styles.instrumentInfo}>
-        <View>
+      <View style={styles.instrumentRow}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.ticker}>{instrument.ticker}</Text>
-          <Text style={styles.instrumentName}>{instrument.name}</Text>
+          <Text style={styles.name} numberOfLines={1}>
+            {instrument.name}
+          </Text>
         </View>
-        <View style={styles.priceContainer}>
+
+        <View style={styles.priceBox}>
           <Text style={styles.priceLabel}>Precio actual</Text>
-          <Text style={styles.price}>{formatCurrency(instrument.last_price)}</Text>
+          <Text style={styles.priceValue}>
+            {formatCurrency(instrument.last_price)}
+          </Text>
         </View>
       </View>
 
-      {/* Order Type Selector */}
+      <View style={styles.divider} />
+
       <Controller
         control={control}
         name="side"
@@ -92,7 +107,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           <Controller
             control={control}
             name="type"
-            render={({ field: { value: typeValue, onChange: onTypeChange } }) => (
+            render={({
+              field: { value: typeValue, onChange: onTypeChange },
+            }) => (
               <OrderTypeSelector
                 side={value}
                 onSideChange={onChange}
@@ -104,7 +121,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         )}
       />
 
-      {/* Quantity Input */}
       <Controller
         control={control}
         name="quantity"
@@ -112,72 +128,81 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           <QuantityInput
             quantity={value}
             onQuantityChange={onChange}
-            price={watchedType === 'LIMIT' && priceText ? parseFloat(priceText) : instrument.last_price}
+            price={
+              watchedType === "LIMIT" && priceText
+                ? parseFloat(priceText)
+                : instrument.last_price
+            }
           />
         )}
       />
-      {errors.quantity && (
+      {errors.quantity?.message ? (
         <Text style={styles.errorText}>{errors.quantity.message}</Text>
-      )}
+      ) : null}
 
-      {/* Price Input (only for LIMIT orders) */}
-      {watchedType === 'LIMIT' && (
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Precio límite</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.currency}>$</Text>
+      {watchedType === "LIMIT" && (
+        <View style={styles.field}>
+          <Text style={styles.fieldLabel}>Precio límite</Text>
+
+          <View style={styles.inputWrap}>
+            <Text style={styles.prefix}>$</Text>
             <TextInput
               style={styles.input}
               value={priceText}
               onChangeText={handlePriceChange}
               placeholder="0.00"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={TOKENS.subtext}
               keyboardType="decimal-pad"
               returnKeyType="done"
             />
           </View>
-          {errors.price && (
+
+          {errors.price?.message ? (
             <Text style={styles.errorText}>{errors.price.message}</Text>
-          )}
+          ) : null}
         </View>
       )}
 
-      {/* Total Estimated */}
       {watchedQuantity > 0 && (
-        <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>Total estimado</Text>
-          <Text style={styles.totalValue}>{formatCurrency(totalEstimated)}</Text>
+        <View style={styles.totalBox}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Ionicons
+              name="calculator-outline"
+              size={16}
+              color={TOKENS.subtext}
+            />
+            <Text style={styles.totalLabel}>Total estimado</Text>
+          </View>
+          <Text style={styles.totalValue}>
+            {formatCurrency(totalEstimated)}
+          </Text>
         </View>
       )}
 
-      {/* Action Buttons */}
-      <View style={styles.buttonContainer}>
+      <View style={styles.actions}>
         <TouchableOpacity
-          style={[styles.button, styles.buttonCancel]}
+          style={[styles.btn, styles.btnSecondary]}
           onPress={onCancel}
           disabled={loading}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
-          <Text style={styles.buttonTextCancel}>Cancelar</Text>
+          <Text style={styles.btnSecondaryText}>Cancelar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
-            styles.button,
-            styles.buttonSubmit,
-            watchedSide === 'BUY' ? styles.buttonBuy : styles.buttonSell,
-            loading && styles.buttonDisabled
+            styles.btn,
+            watchedSide === "BUY" ? styles.btnBuy : styles.btnSell,
+            loading && styles.btnDisabled,
           ]}
           onPress={handleSubmit(handleFormSubmit)}
           disabled={loading}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#ffffff" />
+            <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonTextSubmit}>
-              {watchedSide === 'BUY' ? 'Comprar' : 'Vender'}
-            </Text>
+            <Text style={styles.btnPrimaryText}>{submitLabel}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -185,131 +210,146 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   );
 };
 
+const TOKENS = {
+  fill: "#F3F4F6",
+  text: "#111827",
+  subtext: "#6B7280",
+  divider: "#EEF2F7",
+  buy: "#10B981",
+  sell: "#EF4444",
+};
+
 const styles = StyleSheet.create({
   container: {
-    gap: 20,
+    gap: 14,
   },
-  instrumentInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+
+  instrumentRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
   },
   ticker: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 4,
+    fontSize: 18,
+    fontWeight: "800",
+    color: TOKENS.text,
   },
-  instrumentName: {
-    fontSize: 14,
-    color: '#6b7280',
+  name: {
+    fontSize: 12,
+    color: TOKENS.subtext,
+    marginTop: 2,
+    fontWeight: "500",
   },
-  priceContainer: {
-    alignItems: 'flex-end',
+  priceBox: {
+    alignItems: "flex-end",
   },
   priceLabel: {
-    fontSize: 12,
-    color: '#6b7280',
+    fontSize: 11,
+    color: TOKENS.subtext,
     marginBottom: 2,
+    fontWeight: "500",
   },
-  price: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
+  priceValue: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: TOKENS.text,
   },
-  inputGroup: {
+
+  divider: {
+    height: 1,
+    backgroundColor: TOKENS.divider,
+  },
+
+  field: {
     gap: 8,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+  fieldLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: TOKENS.text,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+
+  inputWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: TOKENS.fill,
+    borderRadius: 12,
     paddingHorizontal: 12,
+    height: 46,
   },
-  currency: {
-    fontSize: 18,
-    color: '#6b7280',
-    marginRight: 4,
+  prefix: {
+    fontSize: 16,
+    color: TOKENS.subtext,
+    marginRight: 6,
+    fontWeight: "600",
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: '#1f2937',
-    paddingVertical: 12,
+    fontSize: 15,
+    color: TOKENS.text,
+    fontWeight: "500",
   },
+
   errorText: {
-    fontSize: 13,
-    color: '#ef4444',
-    marginTop: -4,
+    fontSize: 12,
+    color: TOKENS.sell,
+    marginTop: -2,
+    fontWeight: "500",
   },
-  totalContainer: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+
+  totalBox: {
+    backgroundColor: TOKENS.fill,
+    borderRadius: 12,
+    padding: 14,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   totalLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#374151',
+    fontSize: 13,
+    fontWeight: "700",
+    color: TOKENS.text,
   },
   totalValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontSize: 16,
+    fontWeight: "800",
+    color: TOKENS.text,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+
+  actions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 2,
   },
-  button: {
+  btn: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 46,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  buttonCancel: {
-    backgroundColor: '#f3f4f6',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+  btnSecondary: {
+    backgroundColor: TOKENS.fill,
   },
-  buttonSubmit: {
-    minHeight: 48,
+  btnSecondaryText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: TOKENS.text,
   },
-  buttonBuy: {
-    backgroundColor: '#10b981',
+
+  btnBuy: {
+    backgroundColor: TOKENS.buy,
   },
-  buttonSell: {
-    backgroundColor: '#ef4444',
+  btnSell: {
+    backgroundColor: TOKENS.sell,
   },
-  buttonDisabled: {
-    opacity: 0.6,
+  btnPrimaryText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#fff",
   },
-  buttonTextCancel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6b7280',
-  },
-  buttonTextSubmit: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
+
+  btnDisabled: {
+    opacity: 0.65,
   },
 });

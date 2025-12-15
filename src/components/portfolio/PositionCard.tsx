@@ -1,8 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Position } from '../../types';
-import { calculateMarketValue, calculateProfit, calculateProfitPercentage } from '../../utils/calculations';
-import { formatCurrency, formatPercentage } from '../../utils/formatters';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Position } from "../../types";
+import {
+  calculateMarketValue,
+  calculateProfit,
+  calculateProfitPercentage,
+} from "../../utils/calculations";
+import { formatCurrency, formatPercentage } from "../../utils/formatters";
 
 interface PositionCardProps {
   position: Position;
@@ -13,47 +17,58 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 
   const marketValue = calculateMarketValue(quantity, last_price);
   const profit = calculateProfit(quantity, last_price, avg_cost_price);
-  const profitPercentage = calculateProfitPercentage(last_price, avg_cost_price);
+  const profitPercentage = calculateProfitPercentage(
+    last_price,
+    avg_cost_price
+  );
 
   const isProfitable = profit >= 0;
-  const profitColor = isProfitable ? '#10b981' : '#ef4444';
+
+  const profitColor = isProfitable ? "#10B981" : "#EF4444";
+  const pillBg = isProfitable ? "#ECFDF5" : "#FEF2F2";
+  const pillBorder = isProfitable ? "#A7F3D0" : "#FECACA";
 
   return (
     <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.ticker}>{ticker}</Text>
-        <Text style={styles.quantity}>{quantity} acciones</Text>
-      </View>
+      <View style={styles.topRow}>
+        <View style={styles.left}>
+          <Text style={styles.ticker}>{ticker}</Text>
+          <Text style={styles.quantity}>{quantity} acciones</Text>
+        </View>
 
-      <View style={styles.row}>
-        <Text style={styles.label}>Valor de mercado:</Text>
-        <Text style={styles.value}>{formatCurrency(marketValue)}</Text>
-      </View>
+        <View style={styles.right}>
+          <Text style={styles.marketValue}>{formatCurrency(marketValue)}</Text>
 
-      <View style={styles.row}>
-        <Text style={styles.label}>Ganancia:</Text>
-        <Text style={[styles.value, { color: profitColor }]}>
-          {formatCurrency(profit)}
-        </Text>
-      </View>
-
-      <View style={styles.row}>
-        <Text style={styles.label}>Rendimiento:</Text>
-        <Text style={[styles.value, { color: profitColor }]}>
-          {formatPercentage(profitPercentage)}
-        </Text>
+          <View
+            style={[
+              styles.pill,
+              { backgroundColor: pillBg, borderColor: pillBorder },
+            ]}
+          >
+            <Text style={[styles.pillText, { color: profitColor }]}>
+              {formatPercentage(profitPercentage)}
+            </Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.divider} />
 
-      <View style={styles.footer}>
-        <Text style={styles.footerLabel}>Precio promedio de compra:</Text>
-        <Text style={styles.footerValue}>{formatCurrency(avg_cost_price)}</Text>
+      <View style={styles.kvRow}>
+        <Text style={styles.kLabel}>Ganancia</Text>
+        <Text style={[styles.kValueStrong, { color: profitColor }]}>
+          {formatCurrency(profit)}
+        </Text>
       </View>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerLabel}>Precio actual:</Text>
-        <Text style={styles.footerValue}>{formatCurrency(last_price)}</Text>
+      <View style={styles.kvRow}>
+        <Text style={styles.kLabel}>Precio prom. compra</Text>
+        <Text style={styles.kValue}>{formatCurrency(avg_cost_price)}</Text>
+      </View>
+
+      <View style={styles.kvRow}>
+        <Text style={styles.kLabel}>Precio actual</Text>
+        <Text style={styles.kValue}>{formatCurrency(last_price)}</Text>
       </View>
     </View>
   );
@@ -61,68 +76,94 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  ticker: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
-  },
-  quantity: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E6EAF2",
+    borderRadius: 6,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
     marginBottom: 12,
+
+    elevation: 0,
+    shadowColor: "transparent",
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
   },
-  label: {
+
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+
+  left: {
+    flex: 1,
+    paddingRight: 12,
+  },
+
+  right: {
+    alignItems: "flex-end",
+  },
+
+  ticker: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: "#111827",
+  },
+
+  quantity: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginTop: 3,
+    fontWeight: "600",
+  },
+
+  marketValue: {
     fontSize: 14,
-    color: '#6b7280',
+    fontWeight: "800",
+    color: "#111827",
   },
-  value: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
+
+  pill: {
+    marginTop: 8,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
   },
+  pillText: {
+    fontSize: 10.5,
+    fontWeight: "700",
+  },
+
   divider: {
     height: 1,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#EEF2F7",
     marginVertical: 12,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
+
+  kvRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 6,
   },
-  footerLabel: {
+
+  kLabel: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: "#6B7280",
+    fontWeight: "600",
+    width: 140,
   },
-  footerValue: {
+  kValue: {
     fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#111827",
+    fontWeight: "800",
+  },
+
+  kValueStrong: {
+    fontSize: 12,
+    fontWeight: "800",
   },
 });

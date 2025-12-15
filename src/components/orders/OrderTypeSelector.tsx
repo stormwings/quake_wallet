@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { OrderSide, OrderType } from '../../types';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { OrderSide, OrderType } from "../../types";
 
 interface OrderTypeSelectorProps {
   side: OrderSide;
@@ -13,82 +13,60 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   side,
   onSideChange,
   type,
-  onTypeChange
+  onTypeChange,
 }) => {
   return (
     <View style={styles.container}>
-      {/* BUY/SELL Selector */}
       <View style={styles.section}>
         <Text style={styles.label}>Operación</Text>
-        <View style={styles.buttonGroup}>
+
+        <View style={styles.pillWrap}>
           <TouchableOpacity
-            style={[
-              styles.button,
-              styles.buttonLeft,
-              side === 'BUY' && styles.buttonActiveBuy
-            ]}
-            onPress={() => onSideChange('BUY')}
-            activeOpacity={0.8}
+            style={[styles.pillBtn, side === "BUY" && styles.pillActiveBuy]}
+            onPress={() => onSideChange("BUY")}
+            activeOpacity={0.85}
           >
-            <Text style={[
-              styles.buttonText,
-              side === 'BUY' && styles.buttonTextActive
-            ]}>
+            <Text style={[styles.pillText, side === "BUY" && styles.pillTextActive]}>
               COMPRAR
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={[
-              styles.button,
-              styles.buttonRight,
-              side === 'SELL' && styles.buttonActiveSell
-            ]}
-            onPress={() => onSideChange('SELL')}
-            activeOpacity={0.8}
+            style={[styles.pillBtn, side === "SELL" && styles.pillActiveSell]}
+            onPress={() => onSideChange("SELL")}
+            activeOpacity={0.85}
           >
-            <Text style={[
-              styles.buttonText,
-              side === 'SELL' && styles.buttonTextActive
-            ]}>
+            <Text style={[styles.pillText, side === "SELL" && styles.pillTextActive]}>
               VENDER
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* MARKET/LIMIT Selector */}
       <View style={styles.section}>
         <Text style={styles.label}>Tipo de orden</Text>
-        <View style={styles.buttonGroup}>
+
+        <View style={styles.miniSegWrap}>
           <TouchableOpacity
-            style={[
-              styles.button,
-              styles.buttonLeft,
-              type === 'MARKET' && styles.buttonActiveType
-            ]}
-            onPress={() => onTypeChange('MARKET')}
-            activeOpacity={0.8}
+            style={[styles.miniSegBtn, type === "MARKET" && styles.miniSegActive]}
+            onPress={() => onTypeChange("MARKET")}
+            activeOpacity={0.85}
           >
-            <Text style={[
-              styles.buttonText,
-              type === 'MARKET' && styles.buttonTextActive
-            ]}>
+            <Text style={[styles.miniSegText, type === "MARKET" && styles.miniSegTextActive]}>
               MARKET
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={[
-              styles.button,
-              styles.buttonRight,
-              type === 'LIMIT' && styles.buttonActiveType
-            ]}
-            onPress={() => onTypeChange('LIMIT')}
-            activeOpacity={0.8}
+            style={[styles.miniSegBtn, type === "LIMIT" && styles.miniSegActive]}
+            onPress={() => onTypeChange("LIMIT")}
+            activeOpacity={0.85}
           >
             <Text style={[
-              styles.buttonText,
-              type === 'LIMIT' && styles.buttonTextActive
-            ]}>
+                styles.miniSegText,
+                type === "LIMIT" && styles.miniSegTextActive,
+              ]}
+            >
               LIMIT
             </Text>
           </TouchableOpacity>
@@ -98,57 +76,83 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   );
 };
 
+const TOKENS = {
+  fill: "#F3F4F6",
+  text: "#111827",
+  subtext: "#6B7280",
+  buy: "#10B981",
+  sell: "#EF4444",
+  divider: "#EEF2F7",
+};
+
 const styles = StyleSheet.create({
   container: {
-    gap: 16,
+    gap: 14,
   },
   section: {
     gap: 8,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 4,
+    fontSize: 12,
+    fontWeight: "700",
+    color: TOKENS.text,
   },
-  buttonGroup: {
-    flexDirection: 'row',
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+
+  pillWrap: {
+    backgroundColor: TOKENS.fill,
+    borderRadius: 12,
+    padding: 3,
+    flexDirection: "row",
+    gap: 6,
   },
-  button: {
+  pillBtn: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    height: 38,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  buttonLeft: {
-    borderRightWidth: 0.5,
-    borderRightColor: '#d1d5db',
+  pillActiveBuy: {
+    backgroundColor: TOKENS.buy,
   },
-  buttonRight: {
-    borderLeftWidth: 0.5,
-    borderLeftColor: '#d1d5db',
+  pillActiveSell: {
+    backgroundColor: TOKENS.sell,
   },
-  buttonActiveBuy: {
-    backgroundColor: '#10b981',
+  pillText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: TOKENS.subtext,
   },
-  buttonActiveSell: {
-    backgroundColor: '#ef4444',
+  pillTextActive: {
+    color: "#fff",
   },
-  buttonActiveType: {
-    backgroundColor: '#3b82f6',
+
+  miniSegWrap: {
+    backgroundColor: TOKENS.fill,
+    borderRadius: 12,
+    padding: 3,
+    flexDirection: "row",
+    gap: 6,
   },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#6b7280',
+  miniSegBtn: {
+    flex: 1,
+    height: 36,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  buttonTextActive: {
-    color: '#ffffff',
+  miniSegActive: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: TOKENS.divider,
+  },
+  miniSegText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: TOKENS.subtext,
+  },
+  miniSegTextActive: {
+    color: TOKENS.text,
+    fontWeight: "700",
   },
 });

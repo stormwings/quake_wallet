@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View, RefreshControl } from 'react-native';
-import { InstrumentCard, Loading, ErrorMessage, OrderModal } from '../components';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ErrorMessage, InstrumentCard, Loading, OrderModal } from '../components';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchInstruments } from '../store/slices';
 import { Instrument } from '../types';
@@ -75,9 +75,10 @@ export default function InstrumentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#FFFFFF',
   },
   list: {
     paddingVertical: 8,
+    paddingBottom: 24,
   },
 });

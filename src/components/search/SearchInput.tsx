@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 interface SearchInputProps {
   value: string;
@@ -10,33 +11,38 @@ interface SearchInputProps {
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChangeText,
-  placeholder = 'Buscar por ticker...'
+  placeholder = "Buscar por ticker...",
 }) => {
   const handleClear = () => {
-    onChangeText('');
+    onChangeText("");
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <View style={styles.leftIconWrap}>
+          <Ionicons name="search" size={18} color="#9CA3AF" />
+        </View>
+
         <TextInput
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor="#9CA3AF"
           autoCapitalize="characters"
           autoCorrect={false}
           returnKeyType="search"
         />
+
         {value.length > 0 && (
           <TouchableOpacity
             onPress={handleClear}
             style={styles.clearButton}
             activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={styles.clearIcon}>✕</Text>
+            <Ionicons name="close" size={18} color="#6B7280" />
           </TouchableOpacity>
         )}
       </View>
@@ -46,47 +52,45 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 10,
+    paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    borderBottomColor: "#EEF2F7",
   },
+
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#E5E7EB",
     paddingHorizontal: 12,
+    height: 44,
   },
-  searchIcon: {
-    fontSize: 18,
+
+  leftIconWrap: {
     marginRight: 8,
-    color: '#6b7280',
+    alignItems: "center",
+    justifyContent: "center",
   },
+
   input: {
     flex: 1,
-    fontSize: 16,
-    color: '#1f2937',
-    paddingVertical: 12,
+    fontSize: 14,
+    color: "#111827",
+    paddingVertical: 10,
   },
+
   clearButton: {
-    padding: 4,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EEF2F7",
     marginLeft: 8,
-  },
-  clearIcon: {
-    fontSize: 20,
-    color: '#9ca3af',
-    fontWeight: 'bold',
   },
 });
