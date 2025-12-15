@@ -40,11 +40,13 @@ export default function PortfolioScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View testID="portfolio-screen" style={styles.container}>
       {positions && positions.length > 0 && (
-        <View style={styles.summaryCard}>
+        <View testID="portfolio-summary" style={styles.summaryCard}>
           <Text style={styles.headerLabel}>Valor total del portafolio</Text>
-          <Text style={styles.headerValue}>{formatCurrency(totalValue)}</Text>
+          <Text testID="portfolio-total-value" style={styles.headerValue}>
+            {formatCurrency(totalValue)}
+          </Text>
         </View>
       )}
 
@@ -55,7 +57,7 @@ export default function PortfolioScreen() {
           onRefresh={handleRefresh}
         />
       ) : (
-        <View style={styles.emptyContainer}>
+        <View testID="portfolio-empty-state" style={styles.emptyContainer}>
           <Text style={styles.emptyText}>
             No tienes posiciones en tu portafolio
           </Text>
@@ -63,7 +65,7 @@ export default function PortfolioScreen() {
       )}
 
       {error && positions && (
-        <View style={styles.errorBanner}>
+        <View testID="portfolio-error-banner" style={styles.errorBanner}>
           <Text style={styles.errorBannerText}>{error}</Text>
         </View>
       )}

@@ -24,7 +24,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
   if (!query.trim()) {
     return (
-      <View style={styles.emptyContainer}>
+      <View testID="search-empty-state" style={styles.emptyContainer}>
         <View style={styles.illustrationCircle}>
           <Ionicons name="search" size={28} color="#6D28D9" />
         </View>
@@ -38,7 +38,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
   if (results.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
+      <View testID="search-no-results" style={styles.emptyContainer}>
         <View
           style={[styles.illustrationCircle, styles.illustrationCircleMuted]}
         >
@@ -54,6 +54,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
   return (
     <FlatList
+      testID="search-results-list"
       data={results}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (

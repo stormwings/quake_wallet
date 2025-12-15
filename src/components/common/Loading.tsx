@@ -8,7 +8,7 @@ interface LoadingProps {
 
 export function Loading({ size = 'large', color = '#6D28D9' }: LoadingProps) {
   return (
-    <View style={styles.container}>
+    <View testID="loading-indicator" style={styles.container}>
       <ActivityIndicator size={size} color={color} />
     </View>
   );

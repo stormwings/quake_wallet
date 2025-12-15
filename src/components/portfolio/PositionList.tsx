@@ -16,6 +16,7 @@ export const PositionList: React.FC<PositionListProps> = ({
 }) => {
   return (
     <FlatList
+      testID="position-list"
       data={positions}
       keyExtractor={(item) => item.instrument_id.toString()}
       renderItem={({ item }) => <PositionCard position={item} />}

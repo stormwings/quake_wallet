@@ -29,17 +29,24 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
   const pillBorder = isProfitable ? "#A7F3D0" : "#FECACA";
 
   return (
-    <View style={styles.card}>
+    <View testID={`position-card-${ticker}`} style={styles.card}>
       <View style={styles.topRow}>
         <View style={styles.left}>
-          <Text style={styles.ticker}>{ticker}</Text>
-          <Text style={styles.quantity}>{quantity} acciones</Text>
+          <Text testID="position-card-ticker" style={styles.ticker}>
+            {ticker}
+          </Text>
+          <Text testID="position-card-quantity" style={styles.quantity}>
+            {quantity} acciones
+          </Text>
         </View>
 
         <View style={styles.right}>
-          <Text style={styles.marketValue}>{formatCurrency(marketValue)}</Text>
+          <Text testID="position-card-market-value" style={styles.marketValue}>
+            {formatCurrency(marketValue)}
+          </Text>
 
           <View
+            testID="position-card-profit-percentage"
             style={[
               styles.pill,
               { backgroundColor: pillBg, borderColor: pillBorder },
@@ -56,19 +63,26 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 
       <View style={styles.kvRow}>
         <Text style={styles.kLabel}>Ganancia</Text>
-        <Text style={[styles.kValueStrong, { color: profitColor }]}>
+        <Text
+          testID="position-card-profit"
+          style={[styles.kValueStrong, { color: profitColor }]}
+        >
           {formatCurrency(profit)}
         </Text>
       </View>
 
       <View style={styles.kvRow}>
         <Text style={styles.kLabel}>Precio prom. compra</Text>
-        <Text style={styles.kValue}>{formatCurrency(avg_cost_price)}</Text>
+        <Text testID="position-card-avg-cost" style={styles.kValue}>
+          {formatCurrency(avg_cost_price)}
+        </Text>
       </View>
 
       <View style={styles.kvRow}>
         <Text style={styles.kLabel}>Precio actual</Text>
-        <Text style={styles.kValue}>{formatCurrency(last_price)}</Text>
+        <Text testID="position-card-last-price" style={styles.kValue}>
+          {formatCurrency(last_price)}
+        </Text>
       </View>
     </View>
   );

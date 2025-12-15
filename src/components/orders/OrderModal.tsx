@@ -54,6 +54,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
   return (
     <Modal
+      testID="order-modal"
       visible={visible}
       animationType="slide"
       transparent
@@ -77,11 +78,12 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           </View>
 
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>
+            <Text testID="order-modal-title" style={styles.headerTitle}>
               {response ? "Resultado de la orden" : "Nueva orden"}
             </Text>
 
             <TouchableOpacity
+              testID="order-modal-close"
               onPress={handleClose}
               style={styles.closeBtn}
               activeOpacity={0.7}
@@ -102,6 +104,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 <OrderResponse orderId={response.id} status={response.status} />
 
                 <TouchableOpacity
+                  testID="order-modal-new-order"
                   style={styles.primaryBtn}
                   onPress={handleNewOrder}
                   activeOpacity={0.85}
@@ -119,7 +122,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 />
 
                 {error && (
-                  <View style={styles.errorBox}>
+                  <View testID="order-modal-error" style={styles.errorBox}>
                     <Ionicons
                       name="alert-circle-outline"
                       size={16}
