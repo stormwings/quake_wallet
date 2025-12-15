@@ -1,4 +1,4 @@
-# Quake Wallet [v1.0.0]
+# Quake Wallet [v1.1.0]
 
 Aplicación móvil desarrollada en React Native para visualizar instrumentos financieros, gestionar portafolios de inversión y enviar órdenes de compra/venta al mercado.
 
@@ -74,6 +74,11 @@ Endpoints disponibles:
 
 # Changelog
 
+## [v1.1.0] - 2025-12-14
+### Added
+- UI/UX full refactoring and improves
+### Fixed
+- -
 ## [v1.0.0] - 2025-12-12
 ### Added
 - Initial app functionality
