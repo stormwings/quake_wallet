@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../../constants';
+import { reportError, toAppError } from '../../errors';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -13,16 +14,11 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      // Server responded with error status
-      console.error('API Error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      // Request made but no response
-      console.error('Network Error:', error.message);
-    } else {
-      // Something else happened
-      console.error('Error:', error.message);
-    }
-    return Promise.reject(error);
+    const appErr = toAppError(error, {
+      layer: 'api',
+      source: 'axiosInterceptor',
+    });
+    reportError(appErr);
+    return Promise.reject(appErr);
   }
 );

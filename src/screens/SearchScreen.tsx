@@ -5,6 +5,7 @@ import { useDebounce } from "../hooks";
 import { instrumentsApi } from "../services";
 import { Instrument } from "../types";
 import { copy } from "../i18n/copy";
+import { reportError, toAppError } from "../errors";
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
@@ -29,7 +30,12 @@ export default function SearchScreen() {
         const searchResults = await instrumentsApi.search(debouncedQuery);
         setResults(searchResults);
       } catch (err) {
-        console.error("Error searching instruments:", err);
+        const appErr = toAppError(err, {
+          layer: 'ui',
+          screen: 'SearchScreen',
+          action: 'search',
+        });
+        reportError(appErr);
         setResults([]);
       } finally {
         setLoading(false);

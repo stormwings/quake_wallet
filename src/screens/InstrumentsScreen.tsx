@@ -39,7 +39,7 @@ export default function InstrumentsScreen() {
   }
 
   if (error && !instruments) {
-    return <ErrorMessage message={error} onRetry={handleRetry} />;
+    return <ErrorMessage error={error} onRetry={handleRetry} />;
   }
 
   return (

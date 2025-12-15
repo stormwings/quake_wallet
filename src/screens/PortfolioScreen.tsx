@@ -6,6 +6,7 @@ import { fetchPortfolio } from "../store/slices";
 import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
 import { copy } from "../i18n/copy";
+import { getUserMessage } from "../errors";
 
 export default function PortfolioScreen() {
   const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ export default function PortfolioScreen() {
   }
 
   if (error && !positions) {
-    return <ErrorMessage message={error} onRetry={handleRetry} />;
+    return <ErrorMessage error={error} onRetry={handleRetry} />;
   }
 
   return (
@@ -65,7 +66,7 @@ export default function PortfolioScreen() {
 
       {error && positions && (
         <View testID="portfolio-error-banner" style={styles.errorBanner}>
-          <Text style={styles.errorBannerText}>{error}</Text>
+          <Text style={styles.errorBannerText}>{getUserMessage(error)}</Text>
         </View>
       )}
     </View>

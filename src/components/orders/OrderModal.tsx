@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { clearOrdersResponse, createOrder } from "../../store/slices";
 import { Instrument, OrderRequest } from "../../types";
+import { getUserMessage } from "../../errors";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
 import { copy } from "../../i18n/copy";
@@ -133,7 +134,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                       size={16}
                       color={TOKENS.danger}
                     />
-                    <Text style={styles.errorText}>{error}</Text>
+                    <Text style={styles.errorText}>{getUserMessage(error)}</Text>
                   </View>
                 )}
               </>
