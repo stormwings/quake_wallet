@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { SearchInput, SearchResults, OrderModal } from '../components';
-import { useDebounce } from '../hooks';
-import { instrumentsApi } from '../services';
-import { Instrument } from '../types';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { OrderModal, SearchInput, SearchResults } from "../components";
+import { useDebounce } from "../hooks";
+import { instrumentsApi } from "../services";
+import { Instrument } from "../types";
 
 export default function SearchScreen() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<Instrument[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+  const [selectedInstrument, setSelectedInstrument] =
+    useState<Instrument | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
@@ -27,8 +28,7 @@ export default function SearchScreen() {
         const searchResults = await instrumentsApi.search(debouncedQuery);
         setResults(searchResults);
       } catch (err) {
-        // Error handling: log and clear results
-        console.error('Error searching instruments:', err);
+        console.error("Error searching instruments:", err);
         setResults([]);
       } finally {
         setLoading(false);
@@ -55,6 +55,7 @@ export default function SearchScreen() {
         onChangeText={setQuery}
         placeholder="Buscar por ticker..."
       />
+
       <SearchResults
         results={results}
         loading={loading}
@@ -74,6 +75,6 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#F8FAFC",
   },
 });

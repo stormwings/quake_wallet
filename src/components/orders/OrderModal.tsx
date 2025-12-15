@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect } from "react";
 import {
   KeyboardAvoidingView,
   Modal,
@@ -7,13 +8,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { clearResponse, createOrder } from '../../store/slices';
-import { Instrument, OrderRequest } from '../../types';
-import { OrderForm } from './OrderForm';
-import { OrderResponse } from './OrderResponse';
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { useAppDispatch, useAppSelector } from "../../store";
+import { clearResponse, createOrder } from "../../store/slices";
+import { Instrument, OrderRequest } from "../../types";
+import { OrderForm } from "./OrderForm";
+import { OrderResponse } from "./OrderResponse";
 
 interface OrderModalProps {
   visible: boolean;
@@ -24,16 +27,14 @@ interface OrderModalProps {
 export const OrderModal: React.FC<OrderModalProps> = ({
   visible,
   onClose,
-  instrument
+  instrument,
 }) => {
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
   const { loading, error, response } = useAppSelector((state) => state.orders);
 
   useEffect(() => {
-    // Clear response when modal opens with new instrument
-    if (visible && instrument) {
-      dispatch(clearResponse());
-    }
+    if (visible && instrument) dispatch(clearResponse());
   }, [visible, instrument, dispatch]);
 
   const handleSubmit = (orderData: OrderRequest) => {
@@ -55,11 +56,11 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     <Modal
       visible={visible}
       animationType="slide"
-      transparent={true}
+      transparent
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.overlay}
       >
         <TouchableOpacity
@@ -67,22 +68,29 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           activeOpacity={1}
           onPress={handleClose}
         />
-        <View style={styles.modalContainer}>
-          {/* Header */}
+
+        <View
+          style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 14) }]}
+        >
+          <View style={styles.handleWrap}>
+            <View style={styles.handle} />
+          </View>
+
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
-              {response ? 'Resultado de la orden' : 'Nueva orden'}
+              {response ? "Resultado de la orden" : "Nueva orden"}
             </Text>
+
             <TouchableOpacity
               onPress={handleClose}
-              style={styles.closeButton}
+              style={styles.closeBtn}
               activeOpacity={0.7}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Text style={styles.closeButtonText}>✕</Text>
+              <Ionicons name="close" size={18} color={TOKENS.text} />
             </TouchableOpacity>
           </View>
 
-          {/* Content */}
           <ScrollView
             style={styles.content}
             contentContainerStyle={styles.contentContainer}
@@ -92,12 +100,13 @@ export const OrderModal: React.FC<OrderModalProps> = ({
             {response ? (
               <>
                 <OrderResponse orderId={response.id} status={response.status} />
+
                 <TouchableOpacity
-                  style={styles.newOrderButton}
+                  style={styles.primaryBtn}
                   onPress={handleNewOrder}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
-                  <Text style={styles.newOrderButtonText}>Nueva orden</Text>
+                  <Text style={styles.primaryBtnText}>Nueva orden</Text>
                 </TouchableOpacity>
               </>
             ) : (
@@ -108,8 +117,14 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   onCancel={handleClose}
                   loading={loading}
                 />
+
                 {error && (
-                  <View style={styles.errorContainer}>
+                  <View style={styles.errorBox}>
+                    <Ionicons
+                      name="alert-circle-outline"
+                      size={16}
+                      color={TOKENS.danger}
+                    />
                     <Text style={styles.errorText}>{error}</Text>
                   </View>
                 )}
@@ -122,86 +137,108 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   );
 };
 
+const TOKENS = {
+  surface: "#FFFFFF",
+  fill: "#F3F4F6",
+  divider: "#EEF2F7",
+  text: "#111827",
+  subtext: "#6B7280",
+  danger: "#EF4444",
+};
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(17, 24, 39, 0.55)",
   },
-  modalContainer: {
-    width: '100%',
-    minHeight: 260,
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '90%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10,
+
+  sheet: {
+    width: "100%",
+    maxHeight: "90%",
+    backgroundColor: TOKENS.surface,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    borderTopWidth: 1,
+    borderTopColor: TOKENS.divider,
+    overflow: "hidden",
   },
+
+  handleWrap: {
+    paddingTop: 10,
+    paddingBottom: 6,
+    alignItems: "center",
+  },
+  handle: {
+    width: 44,
+    height: 5,
+    borderRadius: 999,
+    backgroundColor: "#D1D5DB",
+    opacity: 0.7,
+  },
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: TOKENS.divider,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontSize: 16,
+    fontWeight: "700",
+    color: TOKENS.text,
   },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#f3f4f6',
-    alignItems: 'center',
-    justifyContent: 'center',
+  closeBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    backgroundColor: TOKENS.fill,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  closeButtonText: {
-    fontSize: 20,
-    color: '#6b7280',
-    fontWeight: '600',
-  },
+
   content: {},
   contentContainer: {
-    padding: 20,
-    paddingBottom: 40,
+    padding: 18,
+    paddingBottom: 22,
+    gap: 14,
   },
-  errorContainer: {
-    backgroundColor: '#fee2e2',
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 12,
+
+  errorBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#FEF2F2",
     borderWidth: 1,
-    borderColor: '#fca5a5',
+    borderColor: "#FEE2E2",
+    padding: 12,
+    borderRadius: 12,
   },
   errorText: {
-    fontSize: 14,
-    color: '#dc2626',
-    textAlign: 'center',
+    flex: 1,
+    fontSize: 13,
+    color: "#991B1B",
+    lineHeight: 18,
+    fontWeight: "500",
   },
-  newOrderButton: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
+
+  primaryBtn: {
+    marginTop: 6,
+    backgroundColor: "#3B82F6",
+    borderRadius: 12,
+    paddingVertical: 13,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  newOrderButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
+  primaryBtnText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 15,
   },
 });

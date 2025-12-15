@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 interface LoadingProps {
   size?: 'small' | 'large';
   color?: string;
 }
 
-export function Loading({ size = 'large', color = '#007AFF' }: LoadingProps) {
+export function Loading({ size = 'large', color = '#6D28D9' }: LoadingProps) {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={color} />

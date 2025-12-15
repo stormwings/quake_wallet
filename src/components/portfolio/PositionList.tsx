@@ -1,7 +1,7 @@
-import React from 'react';
-import { FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { Position } from '../../types';
-import { PositionCard } from './PositionCard';
+import React from "react";
+import { FlatList, RefreshControl, StyleSheet } from "react-native";
+import { Position } from "../../types";
+import { PositionCard } from "./PositionCard";
 
 interface PositionListProps {
   positions: Position[];
@@ -12,7 +12,7 @@ interface PositionListProps {
 export const PositionList: React.FC<PositionListProps> = ({
   positions,
   refreshing = false,
-  onRefresh
+  onRefresh,
 }) => {
   return (
     <FlatList
@@ -32,6 +32,8 @@ export const PositionList: React.FC<PositionListProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 16,
   },
 });

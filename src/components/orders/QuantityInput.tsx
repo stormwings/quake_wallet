@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { calculateQuantityFromAmount } from '../../utils/calculations';
-import { formatCurrency } from '../../utils/formatters';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { calculateQuantityFromAmount } from "../../utils/calculations";
+import { formatCurrency } from "../../utils/formatters";
 
 interface QuantityInputProps {
   quantity: number;
@@ -12,33 +20,30 @@ interface QuantityInputProps {
 export const QuantityInput: React.FC<QuantityInputProps> = ({
   quantity,
   onQuantityChange,
-  price
+  price,
 }) => {
-  const [inputMode, setInputMode] = useState<'quantity' | 'amount'>('quantity');
-  const [amountText, setAmountText] = useState('');
-  const [quantityText, setQuantityText] = useState(quantity > 0 ? quantity.toString() : '');
+  const [inputMode, setInputMode] = useState<"quantity" | "amount">("quantity");
+  const [amountText, setAmountText] = useState("");
+  const [quantityText, setQuantityText] = useState(
+    quantity > 0 ? quantity.toString() : ""
+  );
 
   const handleToggleMode = () => {
-    if (inputMode === 'quantity') {
-      // Switch to amount mode
-      setInputMode('amount');
+    if (inputMode === "quantity") {
+      setInputMode("amount");
       const amount = quantity * price;
-      setAmountText(amount > 0 ? amount.toString() : '');
+      setAmountText(amount > 0 ? amount.toString() : "");
     } else {
-      // Switch to quantity mode
-      setInputMode('quantity');
-      setQuantityText(quantity > 0 ? quantity.toString() : '');
+      setInputMode("quantity");
+      setQuantityText(quantity > 0 ? quantity.toString() : "");
     }
   };
 
   const handleQuantityChange = (text: string) => {
     setQuantityText(text);
     const value = parseInt(text, 10);
-    if (!isNaN(value) && value > 0) {
-      onQuantityChange(value);
-    } else if (text === '') {
-      onQuantityChange(0);
-    }
+    if (!isNaN(value) && value > 0) onQuantityChange(value);
+    else if (text === "") onQuantityChange(0);
   };
 
   const handleAmountChange = (text: string) => {
@@ -48,9 +53,9 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
       const calculatedQuantity = calculateQuantityFromAmount(value, price);
       onQuantityChange(calculatedQuantity);
       setQuantityText(calculatedQuantity.toString());
-    } else if (text === '') {
+    } else if (text === "") {
       onQuantityChange(0);
-      setQuantityText('');
+      setQuantityText("");
     }
   };
 
@@ -58,49 +63,72 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.label}>
-          {inputMode === 'quantity' ? 'Cantidad' : 'Monto total'}
+          {inputMode === "quantity" ? "Cantidad" : "Monto total"}
         </Text>
-        <TouchableOpacity onPress={handleToggleMode} activeOpacity={0.7}>
+
+        <TouchableOpacity
+          onPress={handleToggleMode}
+          activeOpacity={0.85}
+          style={styles.toggleBtn}
+        >
+          <Ionicons name="swap-horizontal" size={14} color={TOKENS.primary} />
           <Text style={styles.toggleText}>
-            {inputMode === 'quantity' ? 'Ingresar por monto' : 'Ingresar por cantidad'}
+            {inputMode === "quantity"
+              ? "Ingresar por monto"
+              : "Ingresar por cantidad"}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {inputMode === 'quantity' ? (
-        <View style={styles.inputContainer}>
+      {inputMode === "quantity" ? (
+        <View style={styles.inputWrap}>
           <TextInput
             style={styles.input}
             value={quantityText}
             onChangeText={handleQuantityChange}
             placeholder="0"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={TOKENS.subtext}
             keyboardType="numeric"
             returnKeyType="done"
           />
-          <Text style={styles.unit}>acciones</Text>
+          <Text style={styles.suffix}>acciones</Text>
         </View>
       ) : (
         <>
-          <View style={styles.inputContainer}>
-            <Text style={styles.currency}>$</Text>
+          <View style={styles.inputWrap}>
+            <Text style={styles.prefix}>$</Text>
             <TextInput
               style={styles.input}
               value={amountText}
               onChangeText={handleAmountChange}
               placeholder="0.00"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={TOKENS.subtext}
               keyboardType="decimal-pad"
               returnKeyType="done"
             />
           </View>
+
           {quantity > 0 && (
             <View style={styles.infoBox}>
-              <Text style={styles.infoText}>
-                Cantidad calculada: <Text style={styles.infoValue}>{quantity} acciones</Text>
-              </Text>
-              <Text style={styles.infoSubtext}>
-                Precio unitario: {formatCurrency(price)}
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
+                <Ionicons
+                  name="information-circle-outline"
+                  size={16}
+                  color={TOKENS.primary}
+                />
+                <Text style={styles.infoTitle}>
+                  Cantidad calculada:{" "}
+                  <Text style={styles.infoValue}>{quantity} acciones</Text>
+                </Text>
+              </View>
+
+              <Text style={styles.infoSub}>
+                Precio unitario:{" "}
+                <Text style={styles.infoSubStrong}>
+                  {formatCurrency(price)}
+                </Text>
               </Text>
             </View>
           )}
@@ -110,67 +138,92 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
   );
 };
 
+const TOKENS = {
+  fill: "#F3F4F6",
+  text: "#111827",
+  subtext: "#6B7280",
+  primary: "#6D28D9",
+};
+
 const styles = StyleSheet.create({
   container: {
     gap: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+    fontSize: 12,
+    fontWeight: "700",
+    color: TOKENS.text,
+  },
+  toggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: "#F5F3FF",
   },
   toggleText: {
-    fontSize: 13,
-    color: '#3b82f6',
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: "700",
+    color: TOKENS.primary,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+
+  inputWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: TOKENS.fill,
+    borderRadius: 12,
     paddingHorizontal: 12,
+    height: 46,
   },
-  currency: {
-    fontSize: 18,
-    color: '#6b7280',
-    marginRight: 4,
+  prefix: {
+    fontSize: 16,
+    color: TOKENS.subtext,
+    marginRight: 6,
+    fontWeight: "600",
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: '#1f2937',
-    paddingVertical: 12,
+    fontSize: 15,
+    color: TOKENS.text,
+    fontWeight: "500",
   },
-  unit: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginLeft: 8,
+  suffix: {
+    fontSize: 12,
+    color: TOKENS.subtext,
+    marginLeft: 10,
+    fontWeight: "600",
   },
+
   infoBox: {
-    backgroundColor: '#eff6ff',
-    borderRadius: 6,
+    backgroundColor: "#F5F3FF",
+    borderRadius: 12,
     padding: 12,
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
+    gap: 6,
   },
-  infoText: {
-    fontSize: 14,
-    color: '#1e40af',
-    marginBottom: 4,
+  infoTitle: {
+    fontSize: 12,
+    color: TOKENS.text,
+    fontWeight: "600",
   },
   infoValue: {
-    fontWeight: '600',
+    fontWeight: "700",
+    color: TOKENS.text,
   },
-  infoSubtext: {
+  infoSub: {
     fontSize: 12,
-    color: '#3b82f6',
+    color: TOKENS.subtext,
+    marginLeft: 24,
+    fontWeight: "500",
+  },
+  infoSubStrong: {
+    fontWeight: "700",
+    color: TOKENS.text,
   },
 });
