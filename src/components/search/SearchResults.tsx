@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { Instrument } from '../../types';
-import { InstrumentCard } from '../instruments';
-import { Loading } from '../common';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Instrument } from "../../types";
+import { Loading } from "../common";
+import { InstrumentCard } from "../instruments";
 
 interface SearchResultsProps {
   results: Instrument[];
@@ -15,7 +16,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   results,
   loading,
   query,
-  onResultPress
+  onResultPress,
 }) => {
   if (loading) {
     return <Loading />;
@@ -24,7 +25,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   if (!query.trim()) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>🔍</Text>
+        <View style={styles.illustrationCircle}>
+          <Ionicons name="search" size={28} color="#6D28D9" />
+        </View>
         <Text style={styles.emptyTitle}>Buscar instrumentos</Text>
         <Text style={styles.emptyText}>
           Ingresa el ticker del instrumento que deseas buscar
@@ -36,7 +39,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   if (results.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>😕</Text>
+        <View
+          style={[styles.illustrationCircle, styles.illustrationCircleMuted]}
+        >
+          <Ionicons name="alert-circle" size={28} color="#6B7280" />
+        </View>
         <Text style={styles.emptyTitle}>Sin resultados</Text>
         <Text style={styles.emptyText}>
           No se encontraron instrumentos para &quot;{query}&quot;
@@ -50,10 +57,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       data={results}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <InstrumentCard
-          instrument={item}
-          onPress={() => onResultPress(item)}
-        />
+        <InstrumentCard instrument={item} onPress={() => onResultPress(item)} />
       )}
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
@@ -63,28 +67,45 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingVertical: 8,
+    paddingTop: 6,
+    paddingBottom: 18,
   },
+
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 28,
   },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
+
+  illustrationCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#F3E8FF",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E9D5FF",
   },
+
+  illustrationCircleMuted: {
+    backgroundColor: "#F3F4F6",
+    borderColor: "#E5E7EB",
+  },
+
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  emptyText: {
     fontSize: 16,
-    color: '#9ca3af',
-    textAlign: 'center',
-    lineHeight: 24,
+    fontWeight: "800",
+    color: "#111827",
+    marginBottom: 6,
+  },
+
+  emptyText: {
+    fontSize: 13,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 18,
   },
 });

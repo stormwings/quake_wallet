@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Instrument } from '../../types';
-import { calculateReturn } from '../../utils/calculations';
-import { formatCurrency, formatPercentage } from '../../utils/formatters';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Instrument } from "../../types";
+import { calculateReturn } from "../../utils/calculations";
+import { formatCurrency, formatPercentage } from "../../utils/formatters";
 
 interface InstrumentCardProps {
   instrument: Instrument;
@@ -10,25 +10,40 @@ interface InstrumentCardProps {
 }
 
 export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
-  const returnValue = calculateReturn(instrument.last_price, instrument.close_price);
+  const returnValue = calculateReturn(
+    instrument.last_price,
+    instrument.close_price
+  );
   const isPositive = returnValue >= 0;
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <View style={styles.header}>
-        <Text style={styles.ticker}>{instrument.ticker}</Text>
-        <Text style={styles.price}>{formatCurrency(instrument.last_price)}</Text>
+    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.85}>
+      <View style={styles.left}>
+        <View style={styles.iconCircle}>
+          <Text style={styles.iconText}>{instrument.ticker?.slice(0, 2)}</Text>
+        </View>
       </View>
-      <View style={styles.body}>
+
+      <View style={styles.center}>
+        <Text style={styles.ticker} numberOfLines={1}>
+          {instrument.ticker}
+        </Text>
         <Text style={styles.name} numberOfLines={1}>
           {instrument.name}
         </Text>
-        <Text style={[styles.return, isPositive ? styles.positive : styles.negative]}>
+      </View>
+
+      <View style={styles.right}>
+        <Text
+          style={[
+            styles.change,
+            isPositive ? styles.positive : styles.negative,
+          ]}
+        >
           {formatPercentage(returnValue)}
+        </Text>
+        <Text style={styles.price} numberOfLines={1}>
+          {formatCurrency(instrument.last_price)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -36,52 +51,76 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F1F5F9",
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+
+  left: {
+    marginRight: 12,
+  },
+  iconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#F3E8FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#6D28D9",
+    letterSpacing: 0.2,
+  },
+
+  center: {
+    flex: 1,
+    gap: 2,
+    paddingRight: 12,
+    flexShrink: 1,
   },
   ticker: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000',
-  },
-  body: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#111827",
+    lineHeight: 18,
   },
   name: {
-    fontSize: 14,
-    color: '#666',
-    flex: 1,
-    marginRight: 8,
+    fontSize: 12,
+    color: '#6B7280',
+    lineHeight: 16,
+    flexShrink: 1,
   },
-  return: {
-    fontSize: 14,
-    fontWeight: '600',
+
+  right: {
+    alignItems: "flex-end",
+    gap: 2,
+    minWidth: 104,
   },
+  change: {
+    fontSize: 12.5,
+    fontWeight: "700",
+    lineHeight: 16,
+    fontVariant: ["tabular-nums"],
+  },
+  price: {
+    fontSize: 12.5,
+    fontWeight: "600",
+    color: "#111827",
+    lineHeight: 16,
+    fontVariant: ["tabular-nums"],
+  },
+
   positive: {
-    color: '#34C759',
+    color: "#059669",
   },
   negative: {
-    color: '#FF3B30',
+    color: "#DC2626",
   },
 });
