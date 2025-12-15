@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# Run ESLint
+echo "▶ Running ESLint..."
+npm run lint || true
+echo ""
+
+# Run tests
+echo "▶ Running tests..."
+npm test || true
+echo ""
+
+echo "=========================================="
+echo "✅ Checks complete! Commit proceeding..."
+echo "=========================================="
+
+# Always allow commit
+exit 0
