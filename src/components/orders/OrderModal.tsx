@@ -13,7 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppDispatch, useAppSelector } from "../../store";
-import { clearResponse, createOrder } from "../../store/slices";
+import { clearOrdersResponse, createOrder } from "../../store/slices";
 import { Instrument, OrderRequest } from "../../types";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
@@ -34,7 +34,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   const { loading, error, response } = useAppSelector((state) => state.orders);
 
   useEffect(() => {
-    if (visible && instrument) dispatch(clearResponse());
+    if (visible && instrument) dispatch(clearOrdersResponse());
   }, [visible, instrument, dispatch]);
 
   const handleSubmit = (orderData: OrderRequest) => {
@@ -42,12 +42,12 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   };
 
   const handleClose = () => {
-    dispatch(clearResponse());
+    dispatch(clearOrdersResponse());
     onClose();
   };
 
   const handleNewOrder = () => {
-    dispatch(clearResponse());
+    dispatch(clearOrdersResponse());
   };
 
   if (!instrument) return null;
