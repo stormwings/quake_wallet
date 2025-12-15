@@ -1,0 +1,48 @@
+# E2E Flow: Complete Sell Limit Order
+#
+# Objetivo:
+#   Flujo completo end-to-end de una orden de venta LIMIT:
+#   - Usuario navega a Portfolio
+#   - Selecciona una posición existente
+#   - Configura una orden de venta LIMIT
+#   - Ingresa cantidad y precio límite
+#   - Envía la orden
+#   - Verifica la respuesta (PENDING para LIMIT orders)
+#
+# Flujo completo:
+#   1. Launch app
+#   2. Navegar a Portfolio tab
+#   3. Verificar que hay posiciones
+#   4. Tap en una posición específica
+#   5. Verificar que se abre el modal de orden
+#   6. Cambiar a SELL
+#   7. Cambiar a LIMIT
+#   8. Ingresar cantidad (ej: 5 acciones)
+#   9. Ingresar precio límite (ej: precio actual + 10%)
+#   10. Verificar que se calcula el total estimado
+#   11. Tap en botón "Vender"
+#   12. Esperar respuesta del servidor
+#   13. Verificar que la orden está PENDING (típico para LIMIT)
+#   14. Verificar que aparece el order ID
+#   15. Verificar mensaje de que se ejecutará cuando llegue al precio
+#   16. Tap en "Nueva orden" para resetear
+#   17. Cerrar modal
+#
+# Pre-condiciones:
+#   - App está corriendo
+#   - API está disponible y responde
+#   - Usuario tiene al menos una posición en portfolio
+#
+# Post-condiciones:
+#   - Orden LIMIT creada con status PENDING
+#   - Modal cerrado
+#   - Usuario puede continuar operando
+#
+# Notas:
+#   - LIMIT orders típicamente quedan en PENDING hasta que el precio llegue al límite
+#   - Este flow es más complejo porque combina SELL + LIMIT
+#   - Testea funcionalidad condicional (precio input solo aparece para LIMIT)
+
+appId: host.exp.exponent
+---
+# TODO: Implementar flow completo

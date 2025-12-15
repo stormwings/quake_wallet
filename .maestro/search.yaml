@@ -1,0 +1,31 @@
+# E2E Test: Search Screen
+#
+# Objetivo:
+#   Verificar que la funcionalidad de búsqueda funciona correctamente:
+#   - Estado inicial (empty state)
+#   - Búsqueda de instrumentos por ticker
+#   - Manejo de resultados vacíos
+#   - Apertura del modal de órdenes desde resultados
+#
+# Flujo:
+#   1. Navegar al tab Search
+#   2. Verificar estado inicial (sin query)
+#   3. Ingresar texto en el campo de búsqueda
+#   4. Verificar que aparecen resultados
+#   5. Verificar que se puede limpiar la búsqueda
+#   6. Buscar algo que no existe y verificar "no results"
+#   7. Tap en un resultado para abrir modal de orden
+#
+# testIDs principales a usar:
+#   - search-screen
+#   - search-input
+#   - search-input-clear
+#   - search-empty-state
+#   - search-results-list
+#   - search-no-results
+#   - instrument-card-{ticker}
+#   - order-modal
+
+appId: host.exp.exponent
+---
+# TODO: Implementar test

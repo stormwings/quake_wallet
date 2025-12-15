@@ -1,0 +1,45 @@
+# E2E Test: Order Modal & Form
+#
+# Objetivo:
+#   Verificar que el modal y formulario de órdenes funciona correctamente:
+#   - Modal se abre desde instruments/search
+#   - Selector de tipo de orden (BUY/SELL, MARKET/LIMIT)
+#   - Input de cantidad y toggle cantidad/monto
+#   - Input de precio límite (solo para LIMIT)
+#   - Cálculo de total estimado
+#   - Envío de orden y respuesta
+#
+# Flujo:
+#   1. Abrir modal desde instruments
+#   2. Verificar datos del instrumento en el modal
+#   3. Cambiar entre BUY/SELL
+#   4. Cambiar entre MARKET/LIMIT
+#   5. Ingresar cantidad
+#   6. Toggle entre cantidad y monto
+#   7. Para LIMIT: ingresar precio
+#   8. Verificar total estimado
+#   9. Enviar orden (mock)
+#   10. Verificar respuesta (success/error)
+#   11. Cerrar modal
+#
+# testIDs principales a usar:
+#   - order-modal
+#   - order-modal-title
+#   - order-modal-close
+#   - order-form
+#   - order-type-buy
+#   - order-type-sell
+#   - order-type-market
+#   - order-type-limit
+#   - order-quantity-input
+#   - order-amount-input
+#   - order-input-toggle
+#   - order-form-price-input
+#   - order-form-total
+#   - order-form-submit
+#   - order-form-cancel
+#   - order-response-{status}
+
+appId: host.exp.exponent
+---
+# TODO: Implementar test

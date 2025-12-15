@@ -1,0 +1,30 @@
+# E2E Test: Portfolio Screen
+#
+# Objetivo:
+#   Verificar que la pantalla de Portfolio muestra correctamente:
+#   - Valor total del portafolio
+#   - Lista de posiciones con todos sus datos
+#   - Cálculos de ganancias/pérdidas
+#   - Pull-to-refresh funciona correctamente
+#
+# Flujo:
+#   1. Navegar al tab Portfolio
+#   2. Verificar que se muestra el valor total
+#   3. Verificar que las posiciones se cargan
+#   4. Verificar datos de una posición (ticker, cantidad, precios, ganancia)
+#   5. Testear pull-to-refresh
+#
+# testIDs principales a usar:
+#   - portfolio-screen
+#   - portfolio-summary
+#   - portfolio-total-value
+#   - position-card-{ticker}
+#   - position-card-ticker
+#   - position-card-quantity
+#   - position-card-market-value
+#   - position-card-profit
+#   - position-list
+
+appId: host.exp.exponent
+---
+# TODO: Implementar test
