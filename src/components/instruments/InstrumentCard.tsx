@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Instrument } from "../../types";
 import { calculateReturn } from "../../utils/calculations";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
+import { copy } from "../../i18n/copy";
 
 interface InstrumentCardProps {
   instrument: Instrument;
@@ -17,14 +18,16 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
   const isPositive = returnValue >= 0;
 
   return (
-    <TouchableOpacity
-      testID={`instrument-card-${instrument.ticker}`}
-      accessible={true}
-      accessibilityLabel={`Instrument ${instrument.ticker}`}
-      style={styles.row}
-      onPress={onPress}
-      activeOpacity={0.85}
-    >
+      <TouchableOpacity
+        testID={`instrument-card-${instrument.ticker}`}
+        accessible={true}
+        accessibilityLabel={copy.instruments.accessibilityLabel(
+          instrument.ticker
+        )}
+        style={styles.row}
+        onPress={onPress}
+        activeOpacity={0.85}
+      >
       <View style={styles.left}>
         <View style={styles.iconCircle} testID="instrument-card-icon">
           <Text style={styles.iconText}>{instrument.ticker?.slice(0, 2)}</Text>

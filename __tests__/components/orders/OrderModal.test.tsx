@@ -7,6 +7,17 @@ import { OrderModal } from '@/src/components/orders/OrderModal';
 import { Instrument, OrderResponse } from '@/src/types';
 import ordersReducer from '@/src/store/slices/ordersSlice';
 
+jest.mock('@/src/services', () => {
+  const actual = jest.requireActual('@/src/services');
+  return {
+    ...actual,
+    ordersApi: {
+      ...actual.ordersApi,
+      create: jest.fn(() => new Promise(() => {})),
+    },
+  };
+});
+
 const mockInstrument: Instrument = {
   id: 1,
   ticker: 'AAPL',

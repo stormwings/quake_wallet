@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Instrument } from "../../types";
 import { Loading } from "../common";
 import { InstrumentCard } from "../instruments";
+import { copy } from "../../i18n/copy";
 
 interface SearchResultsProps {
   results: Instrument[];
@@ -28,9 +29,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         <View style={styles.illustrationCircle}>
           <Ionicons name="search" size={28} color="#6D28D9" />
         </View>
-        <Text style={styles.emptyTitle}>Buscar instrumentos</Text>
+        <Text style={styles.emptyTitle}>{copy.search.emptyTitle()}</Text>
         <Text style={styles.emptyText}>
-          Ingresa el ticker del instrumento que deseas buscar
+          {copy.search.emptyDescription()}
         </Text>
       </View>
     );
@@ -44,9 +45,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         >
           <Ionicons name="alert-circle" size={28} color="#6B7280" />
         </View>
-        <Text style={styles.emptyTitle}>Sin resultados</Text>
+        <Text style={styles.emptyTitle}>{copy.search.noResultsTitle()}</Text>
         <Text style={styles.emptyText}>
-          No se encontraron instrumentos para &quot;{query}&quot;
+          {copy.search.noResultsDescription(query)}
         </Text>
       </View>
     );

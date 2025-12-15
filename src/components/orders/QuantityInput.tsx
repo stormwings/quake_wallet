@@ -10,6 +10,7 @@ import {
 
 import { calculateQuantityFromAmount } from "../../utils/calculations";
 import { formatCurrency } from "../../utils/formatters";
+import { copy } from "../../i18n/copy";
 
 interface QuantityInputProps {
   quantity: number;
@@ -63,7 +64,9 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.label}>
-          {inputMode === "quantity" ? "Cantidad" : "Monto total"}
+          {inputMode === "quantity"
+            ? copy.orders.quantityInput.labelQuantity()
+            : copy.orders.quantityInput.labelAmount()}
         </Text>
 
         <TouchableOpacity
@@ -75,8 +78,8 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
           <Ionicons name="swap-horizontal" size={14} color={TOKENS.primary} />
           <Text style={styles.toggleText}>
             {inputMode === "quantity"
-              ? "Ingresar por monto"
-              : "Ingresar por cantidad"}
+              ? copy.orders.quantityInput.toggleToAmount()
+              : copy.orders.quantityInput.toggleToQuantity()}
           </Text>
         </TouchableOpacity>
       </View>
@@ -88,12 +91,14 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
             style={styles.input}
             value={quantityText}
             onChangeText={handleQuantityChange}
-            placeholder="0"
+            placeholder={copy.orders.quantityInput.quantityPlaceholder()}
             placeholderTextColor={TOKENS.subtext}
             keyboardType="numeric"
             returnKeyType="done"
           />
-          <Text style={styles.suffix}>acciones</Text>
+          <Text style={styles.suffix}>
+            {copy.orders.quantityInput.quantitySuffix()}
+          </Text>
         </View>
       ) : (
         <>
@@ -104,7 +109,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
               style={styles.input}
               value={amountText}
               onChangeText={handleAmountChange}
-              placeholder="0.00"
+              placeholder={copy.orders.quantityInput.amountPlaceholder()}
               placeholderTextColor={TOKENS.subtext}
               keyboardType="decimal-pad"
               returnKeyType="done"
@@ -122,16 +127,13 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
                   color={TOKENS.primary}
                 />
                 <Text style={styles.infoTitle}>
-                  Cantidad calculada:{" "}
-                  <Text style={styles.infoValue}>{quantity} acciones</Text>
+                  {copy.orders.quantityInput.calculatedLabel(quantity)}
                 </Text>
               </View>
 
               <Text style={styles.infoSub}>
-                Precio unitario:{" "}
-                <Text style={styles.infoSubStrong}>
-                  {formatCurrency(price)}
-                </Text>
+                {copy.orders.quantityInput.unitPriceLabel()}:{" "}
+                <Text style={styles.infoSubStrong}>{formatCurrency(price)}</Text>
               </Text>
             </View>
           )}

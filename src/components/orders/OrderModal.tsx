@@ -17,6 +17,7 @@ import { clearOrdersResponse, createOrder } from "../../store/slices";
 import { Instrument, OrderRequest } from "../../types";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
+import { copy } from "../../i18n/copy";
 
 interface OrderModalProps {
   visible: boolean;
@@ -79,7 +80,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
           <View style={styles.header}>
             <Text testID="order-modal-title" style={styles.headerTitle}>
-              {response ? "Resultado de la orden" : "Nueva orden"}
+              {response
+                ? copy.orders.modal.titleResult()
+                : copy.orders.modal.titleNew()}
             </Text>
 
             <TouchableOpacity
@@ -109,7 +112,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   onPress={handleNewOrder}
                   activeOpacity={0.85}
                 >
-                  <Text style={styles.primaryBtnText}>Nueva orden</Text>
+                  <Text style={styles.primaryBtnText}>
+                    {copy.orders.modal.newOrderCta()}
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (

@@ -11,10 +11,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InstrumentsScreen, PortfolioScreen, SearchScreen } from "../screens";
+import { copy } from "../i18n/copy";
 
 const Tab = createBottomTabNavigator();
-
-const USERNAME = "$usuario";
 
 function HeaderTitle() {
   return (
@@ -24,7 +23,7 @@ function HeaderTitle() {
       </View>
 
       <Text style={styles.headerHello} numberOfLines={1}>
-        Hola <Text style={styles.headerUser}>{USERNAME}</Text> 👋
+        {copy.navigation.greeting(copy.navigation.userPlaceholder())}
       </Text>
     </View>
   );
@@ -83,8 +82,8 @@ export function TabNavigator() {
         name="Instruments"
         component={InstrumentsScreen}
         options={{
-          title: "Instrumentos",
-          tabBarLabel: "Instrumentos",
+          title: copy.navigation.instrumentsTitle(),
+          tabBarLabel: copy.navigation.instrumentsTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "trending-up" : "trending-up-outline"}
@@ -98,8 +97,8 @@ export function TabNavigator() {
         name="Portfolio"
         component={PortfolioScreen}
         options={{
-          title: "Portfolio",
-          tabBarLabel: "Portfolio",
+          title: copy.navigation.portfolioTitle(),
+          tabBarLabel: copy.navigation.portfolioTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -113,8 +112,8 @@ export function TabNavigator() {
         name="Search"
         component={SearchScreen}
         options={{
-          title: "Buscar",
-          tabBarLabel: "Buscar",
+          title: copy.navigation.searchTitle(),
+          tabBarLabel: copy.navigation.searchTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "search" : "search-outline"}

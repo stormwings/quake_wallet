@@ -4,6 +4,7 @@ import { OrderModal, SearchInput, SearchResults } from "../components";
 import { useDebounce } from "../hooks";
 import { instrumentsApi } from "../services";
 import { Instrument } from "../types";
+import { copy } from "../i18n/copy";
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
@@ -53,7 +54,7 @@ export default function SearchScreen() {
       <SearchInput
         value={query}
         onChangeText={setQuery}
-        placeholder="Buscar por ticker..."
+        placeholder={copy.search.placeholder()}
       />
 
       <SearchResults

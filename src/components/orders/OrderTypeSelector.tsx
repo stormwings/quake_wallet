@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { OrderSide, OrderType } from "../../types";
+import { copy } from "../../i18n/copy";
 
 interface OrderTypeSelectorProps {
   side: OrderSide;
@@ -14,11 +15,11 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   onSideChange,
   type,
   onTypeChange,
-}) => {
+    }) => {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.label}>Operación</Text>
+        <Text style={styles.label}>{copy.orders.typeSelector.sideLabel()}</Text>
 
         <View style={styles.pillWrap}>
           <TouchableOpacity
@@ -28,7 +29,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
             activeOpacity={0.85}
           >
             <Text style={[styles.pillText, side === "BUY" && styles.pillTextActive]}>
-              COMPRAR
+              {copy.orders.typeSelector.buy()}
             </Text>
           </TouchableOpacity>
 
@@ -39,14 +40,14 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
             activeOpacity={0.85}
           >
             <Text style={[styles.pillText, side === "SELL" && styles.pillTextActive]}>
-              VENDER
+              {copy.orders.typeSelector.sell()}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.label}>Tipo de orden</Text>
+        <Text style={styles.label}>{copy.orders.typeSelector.typeLabel()}</Text>
 
         <View style={styles.miniSegWrap}>
           <TouchableOpacity
@@ -56,7 +57,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
             activeOpacity={0.85}
           >
             <Text style={[styles.miniSegText, type === "MARKET" && styles.miniSegTextActive]}>
-              MARKET
+              {copy.orders.typeSelector.market()}
             </Text>
           </TouchableOpacity>
 
@@ -71,7 +72,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
                 type === "LIMIT" && styles.miniSegTextActive,
               ]}
             >
-              LIMIT
+              {copy.orders.typeSelector.limit()}
             </Text>
           </TouchableOpacity>
         </View>

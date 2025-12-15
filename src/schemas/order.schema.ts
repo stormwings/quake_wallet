@@ -1,14 +1,15 @@
 import { z } from 'zod';
+import { copy } from '../i18n/copy';
 
 export const orderSchema = z.object({
   side: z.enum(['BUY', 'SELL']),
   type: z.enum(['MARKET', 'LIMIT']),
-  quantity: z.number().int().positive('Quantity must be positive'),
-  price: z.number().positive('Price must be positive').optional(),
+  quantity: z.number().int().positive(copy.validation.quantityPositive()),
+  price: z.number().positive(copy.validation.pricePositive()).optional(),
 }).refine(
   (data) => data.type === 'MARKET' || data.price !== undefined,
   {
-    message: 'Price is required for LIMIT orders',
+    message: copy.validation.priceRequiredForLimit(),
     path: ['price']
   }
 );

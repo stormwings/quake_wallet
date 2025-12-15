@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { copy } from "../../i18n/copy";
 
 interface SearchInputProps {
   value: string;
@@ -11,7 +12,7 @@ interface SearchInputProps {
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChangeText,
-  placeholder = "Buscar por ticker...",
+  placeholder = copy.search.placeholder(),
 }) => {
   const handleClear = () => {
     onChangeText("");

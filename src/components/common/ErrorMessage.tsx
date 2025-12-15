@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { copy } from '../../i18n/copy';
 
 interface ErrorMessageProps {
   message: string;
@@ -16,7 +17,7 @@ export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
           style={styles.retryButton}
           onPress={onRetry}
         >
-          <Text style={styles.retryText}>Retry</Text>
+          <Text style={styles.retryText}>{copy.common.retry()}</Text>
         </TouchableOpacity>
       )}
     </View>

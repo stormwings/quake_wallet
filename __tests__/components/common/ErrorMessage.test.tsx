@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { ErrorMessage } from '@/src/components/common/ErrorMessage';
+import { copy } from '@/src/i18n/copy';
 
 describe('ErrorMessage', () => {
   describe('Rendering', () => {
@@ -30,20 +31,20 @@ describe('ErrorMessage', () => {
       const mockOnRetry = jest.fn();
       const { getByText } = render(<ErrorMessage message="Error" onRetry={mockOnRetry} />);
 
-      expect(getByText('Retry')).toBeTruthy();
+      expect(getByText(copy.common.retry())).toBeTruthy();
     });
 
     it('should not render retry button when onRetry is not provided', () => {
       const { queryByText } = render(<ErrorMessage message="Error" />);
 
-      expect(queryByText('Retry')).toBeNull();
+      expect(queryByText(copy.common.retry())).toBeNull();
     });
 
     it('should call onRetry when retry button is pressed', () => {
       const mockOnRetry = jest.fn();
       const { getByText } = render(<ErrorMessage message="Error" onRetry={mockOnRetry} />);
 
-      const retryButton = getByText('Retry');
+      const retryButton = getByText(copy.common.retry());
       fireEvent.press(retryButton);
 
       expect(mockOnRetry).toHaveBeenCalledTimes(1);
@@ -53,7 +54,7 @@ describe('ErrorMessage', () => {
       const mockOnRetry = jest.fn();
       const { getByText } = render(<ErrorMessage message="Error" onRetry={mockOnRetry} />);
 
-      const retryButton = getByText('Retry');
+      const retryButton = getByText(copy.common.retry());
       fireEvent.press(retryButton);
       fireEvent.press(retryButton);
       fireEvent.press(retryButton);
@@ -64,7 +65,7 @@ describe('ErrorMessage', () => {
     it('should not call onRetry when component renders without onRetry prop', () => {
       const { queryByText } = render(<ErrorMessage message="Error" />);
 
-      expect(queryByText('Retry')).toBeNull();
+      expect(queryByText(copy.common.retry())).toBeNull();
     });
   });
 
@@ -98,14 +99,14 @@ describe('ErrorMessage', () => {
         <ErrorMessage message="Error" onRetry={mockOnRetry} />
       );
 
-      expect(getByText('Retry')).toBeTruthy();
+      expect(getByText(copy.common.retry())).toBeTruthy();
     });
 
     it('should work without onRetry prop', () => {
       const { getByText, queryByText } = render(<ErrorMessage message="Error" />);
 
       expect(getByText('Error')).toBeTruthy();
-      expect(queryByText('Retry')).toBeNull();
+      expect(queryByText(copy.common.retry())).toBeNull();
     });
   });
 });

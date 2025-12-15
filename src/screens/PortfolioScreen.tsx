@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { fetchPortfolio } from "../store/slices";
 import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
+import { copy } from "../i18n/copy";
 
 export default function PortfolioScreen() {
   const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ export default function PortfolioScreen() {
     <View testID="portfolio-screen" style={styles.container}>
       {positions && positions.length > 0 && (
         <View testID="portfolio-summary" style={styles.summaryCard}>
-          <Text style={styles.headerLabel}>Valor total del portafolio</Text>
+          <Text style={styles.headerLabel}>{copy.portfolio.totalLabel()}</Text>
           <Text testID="portfolio-total-value" style={styles.headerValue}>
             {formatCurrency(totalValue)}
           </Text>
@@ -58,9 +59,7 @@ export default function PortfolioScreen() {
         />
       ) : (
         <View testID="portfolio-empty-state" style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            No tienes posiciones en tu portafolio
-          </Text>
+          <Text style={styles.emptyText}>{copy.portfolio.emptyMessage()}</Text>
         </View>
       )}
 
