@@ -1,7 +1,6 @@
-import { formatMoneyDecimal, plural } from "../format";
+import { Currency, formatMoneyDecimal, plural } from "../format";
 import { t } from "../t";
 import { OrderSide, OrderStatus } from "../../types";
-import { Currency } from "../format";
 
 export const copy = {
   common: {
