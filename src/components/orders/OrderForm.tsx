@@ -14,6 +14,7 @@ import {
 import { OrderFormData, orderSchema } from "../../schemas";
 import { Instrument, OrderRequest } from "../../types";
 import { formatCurrency } from "../../utils/formatters";
+import { getFieldErrorMessage } from "../../errors";
 import { OrderTypeSelector } from "./OrderTypeSelector";
 import { QuantityInput } from "./QuantityInput";
 
@@ -138,9 +139,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           />
         )}
       />
-      {errors.quantity?.message ? (
-        // TODO: centralize errors
-        <Text style={styles.errorText}>{errors.quantity.message}</Text>
+      {getFieldErrorMessage(errors.quantity) ? (
+        <Text style={styles.errorText}>{getFieldErrorMessage(errors.quantity)}</Text>
       ) : null}
 
       {watchedType === "LIMIT" && (
@@ -161,9 +161,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({
             />
           </View>
 
-          {errors.price?.message ? (
-            // TODO: centralize errors
-            <Text style={styles.errorText}>{errors.price.message}</Text>
+          {getFieldErrorMessage(errors.price) ? (
+            <Text style={styles.errorText}>{getFieldErrorMessage(errors.price)}</Text>
           ) : null}
         </View>
       )}

@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { OrderRequest, OrderResponse } from '../../types';
 import { ordersApi } from '../../services';
+import { AppError, reportError, toAppError } from '../../errors';
 
 interface OrdersState {
   loading: boolean;
-  error: string | null;
+  error: AppError | null;
   response: OrderResponse | null;
 }
 
@@ -15,13 +16,24 @@ const initialState: OrdersState = {
 };
 
 // Async thunk for creating an order
-export const createOrder = createAsyncThunk(
-  'orders/create',
-  async (orderData: OrderRequest) => {
+export const createOrder = createAsyncThunk<
+  OrderResponse,
+  OrderRequest,
+  { rejectValue: AppError }
+>('orders/create', async (orderData, { rejectWithValue }) => {
+  try {
     const response = await ordersApi.create(orderData);
     return response;
+  } catch (err) {
+    const appErr = toAppError(err, {
+      layer: 'redux',
+      feature: 'orders',
+      action: 'createOrder',
+    });
+    reportError(appErr);
+    return rejectWithValue(appErr);
   }
-);
+});
 
 const ordersSlice = createSlice({
   name: 'orders',
@@ -47,8 +59,9 @@ const ordersSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
-        // TODO: centralize errors
-        state.error = action.error.message || 'Failed to create order';
+        state.error =
+          action.payload ??
+          toAppError(action.error, { layer: 'redux', feature: 'orders' });
       });
   },
 });

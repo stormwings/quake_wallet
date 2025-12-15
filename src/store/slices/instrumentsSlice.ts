@@ -1,21 +1,39 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Instrument, SliceState } from '../../types';
+import { Instrument } from '../../types';
 import { instrumentsApi } from '../../services';
+import { AppError, reportError, toAppError } from '../../errors';
 
-const initialState: SliceState<Instrument[]> = {
+interface InstrumentsState {
+  data: Instrument[] | null;
+  loading: boolean;
+  error: AppError | null;
+}
+
+const initialState: InstrumentsState = {
   data: null,
   loading: false,
   error: null,
 };
 
 // Async thunk for fetching instruments
-export const fetchInstruments = createAsyncThunk(
-  'instruments/fetchAll',
-  async () => {
+export const fetchInstruments = createAsyncThunk<
+  Instrument[],
+  void,
+  { rejectValue: AppError }
+>('instruments/fetchAll', async (_, { rejectWithValue }) => {
+  try {
     const response = await instrumentsApi.getAll();
     return response;
+  } catch (err) {
+    const appErr = toAppError(err, {
+      layer: 'redux',
+      feature: 'instruments',
+      action: 'fetchInstruments',
+    });
+    reportError(appErr);
+    return rejectWithValue(appErr);
   }
-);
+});
 
 const instrumentsSlice = createSlice({
   name: 'instruments',
@@ -37,8 +55,9 @@ const instrumentsSlice = createSlice({
       })
       .addCase(fetchInstruments.rejected, (state, action) => {
         state.loading = false;
-        // TODO: centralize errors
-        state.error = action.error.message || 'Failed to fetch instruments';
+        state.error =
+          action.payload ??
+          toAppError(action.error, { layer: 'redux', feature: 'instruments' });
       });
   },
 });
