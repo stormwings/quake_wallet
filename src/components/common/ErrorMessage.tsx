@@ -6,6 +6,7 @@ interface ErrorMessageProps {
   onRetry?: () => void;
 }
 
+// TODO: centralize errors
 export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
   return (
     <View testID="error-message" style={styles.container}>

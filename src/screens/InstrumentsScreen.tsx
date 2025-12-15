@@ -39,6 +39,7 @@ export default function InstrumentsScreen() {
   }
 
   if (error && !instruments) {
+    // TODO: centralize errors
     return <ErrorMessage message={error} onRetry={handleRetry} />;
   }
 

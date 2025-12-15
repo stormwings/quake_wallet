@@ -122,6 +122,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 />
 
                 {error && (
+                  // TODO: centralize errors
                   <View testID="order-modal-error" style={styles.errorBox}>
                     <Ionicons
                       name="alert-circle-outline"

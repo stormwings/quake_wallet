@@ -28,6 +28,7 @@ export default function SearchScreen() {
         const searchResults = await instrumentsApi.search(debouncedQuery);
         setResults(searchResults);
       } catch (err) {
+        // TODO: centralize errors
         console.error("Error searching instruments:", err);
         setResults([]);
       } finally {

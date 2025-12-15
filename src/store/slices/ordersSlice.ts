@@ -47,6 +47,7 @@ const ordersSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
+        // TODO: centralize errors
         state.error = action.error.message || 'Failed to create order';
       });
   },

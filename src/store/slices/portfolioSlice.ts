@@ -37,6 +37,7 @@ const portfolioSlice = createSlice({
       })
       .addCase(fetchPortfolio.rejected, (state, action) => {
         state.loading = false;
+        // TODO: centralize errors
         state.error = action.error.message || 'Failed to fetch portfolio';
       });
   },

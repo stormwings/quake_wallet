@@ -139,6 +139,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         )}
       />
       {errors.quantity?.message ? (
+        // TODO: centralize errors
         <Text style={styles.errorText}>{errors.quantity.message}</Text>
       ) : null}
 
@@ -161,6 +162,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           </View>
 
           {errors.price?.message ? (
+            // TODO: centralize errors
             <Text style={styles.errorText}>{errors.price.message}</Text>
           ) : null}
         </View>

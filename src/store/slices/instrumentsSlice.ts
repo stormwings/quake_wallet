@@ -37,6 +37,7 @@ const instrumentsSlice = createSlice({
       })
       .addCase(fetchInstruments.rejected, (state, action) => {
         state.loading = false;
+        // TODO: centralize errors
         state.error = action.error.message || 'Failed to fetch instruments';
       });
   },

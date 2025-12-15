@@ -9,6 +9,7 @@ export const apiClient = axios.create({
   },
 });
 
+// TODO: centralize errors
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,

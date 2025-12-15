@@ -36,6 +36,7 @@ export default function PortfolioScreen() {
   }
 
   if (error && !positions) {
+    // TODO: centralize errors
     return <ErrorMessage message={error} onRetry={handleRetry} />;
   }
 
@@ -65,6 +66,7 @@ export default function PortfolioScreen() {
       )}
 
       {error && positions && (
+        // TODO: centralize errors
         <View testID="portfolio-error-banner" style={styles.errorBanner}>
           <Text style={styles.errorBannerText}>{error}</Text>
         </View>
