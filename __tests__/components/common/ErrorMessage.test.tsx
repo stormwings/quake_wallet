@@ -20,8 +20,8 @@ describe('ErrorMessage', () => {
     });
 
     it('should render component without errors', () => {
-      const { container } = render(<ErrorMessage message="Error occurred" />);
-      expect(container).toBeTruthy();
+      const { getByTestId } = render(<ErrorMessage message="Error occurred" />);
+      expect(getByTestId('error-message')).toBeTruthy();
     });
   });
 
@@ -70,17 +70,17 @@ describe('ErrorMessage', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty error message', () => {
-      const { container } = render(<ErrorMessage message="" />);
+      const { getByTestId } = render(<ErrorMessage message="" />);
 
-      expect(container).toBeTruthy();
+      expect(getByTestId('error-message')).toBeTruthy();
     });
 
     it('should handle very long error messages', () => {
       const longMessage = 'This is a very long error message that should still render correctly and be properly displayed to the user without breaking the layout or causing any rendering issues.';
-      const { container } = render(<ErrorMessage message={longMessage} />);
+      const { getByTestId, getByText } = render(<ErrorMessage message={longMessage} />);
 
-      expect(container).toBeTruthy();
-      expect(container.findByProps({ children: longMessage })).toBeTruthy();
+      expect(getByTestId('error-message')).toBeTruthy();
+      expect(getByText(longMessage)).toBeTruthy();
     });
   });
 
