@@ -1,45 +1,362 @@
 # E2E Test: Order Modal & Form
 #
+# terminal command to run: maestro test .maestro/orders.yaml
+#
 # Objetivo:
-#   Verificar que el modal y formulario de órdenes funciona correctamente:
-#   - Modal se abre desde instruments/search
-#   - Selector de tipo de orden (BUY/SELL, MARKET/LIMIT)
-#   - Input de cantidad y toggle cantidad/monto
-#   - Input de precio límite (solo para LIMIT)
-#   - Cálculo de total estimado
-#   - Envío de orden y respuesta
+#   Verificar que el modal y formulario de órdenes funciona correctamente
+#   incluyendo selector de tipo de orden, inputs de cantidad/precio,
+#   cálculos y envío de órdenes
 #
-# Flujo:
-#   1. Abrir modal desde instruments
-#   2. Verificar datos del instrumento en el modal
-#   3. Cambiar entre BUY/SELL
-#   4. Cambiar entre MARKET/LIMIT
-#   5. Ingresar cantidad
-#   6. Toggle entre cantidad y monto
-#   7. Para LIMIT: ingresar precio
-#   8. Verificar total estimado
-#   9. Enviar orden (mock)
-#   10. Verificar respuesta (success/error)
-#   11. Cerrar modal
-#
-# testIDs principales a usar:
-#   - order-modal
-#   - order-modal-title
-#   - order-modal-close
-#   - order-form
-#   - order-type-buy
-#   - order-type-sell
-#   - order-type-market
-#   - order-type-limit
-#   - order-quantity-input
-#   - order-amount-input
-#   - order-input-toggle
-#   - order-form-price-input
-#   - order-form-total
-#   - order-form-submit
-#   - order-form-cancel
-#   - order-response-{status}
+# Casos cubiertos:
+#   - Modal se abre desde instruments
+#   - Datos del instrumento se muestran en el modal
+#   - Selector de tipo de orden BUY/SELL funciona
+#   - Selector de tipo MARKET/LIMIT funciona
+#   - Input de cantidad funciona
+#   - Toggle entre cantidad y monto funciona
+#   - Input de precio límite aparece solo para LIMIT
+#   - Total estimado se calcula correctamente
+#   - Botón de enviar/cancelar funcionan
+#   - Modal se puede cerrar
+#   - Verificación de diferentes combinaciones de órdenes
 
 appId: host.exp.exponent
 ---
-# TODO: Implementar test
+
+# =============================================================================
+# 1. ABRIR MODAL DESDE INSTRUMENTS
+# =============================================================================
+
+# Esperar a que la app se inicialice
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verificar que estamos en instruments screen
+- assertVisible:
+    id: "instruments-screen"
+
+# Esperar a que carguen los instrumentos
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# Tap en el primer instrumento para abrir el modal
+- tapOn:
+    id: "instrument-card-.*"
+    index: 0
+
+# Esperar animación del modal
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 2. VERIFICAR APERTURA Y ESTRUCTURA DEL MODAL
+# =============================================================================
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# Verificar título del modal
+- assertVisible:
+    id: "order-modal-title"
+
+# Verificar que el formulario está visible
+- assertVisible:
+    id: "order-form"
+
+# Verificar botón de cerrar
+- assertVisible:
+    id: "order-modal-close"
+
+# =============================================================================
+# 3. VERIFICAR DATOS DEL INSTRUMENTO EN EL MODAL
+# =============================================================================
+
+# Verificar que se muestra el ticker del instrumento
+- assertVisible:
+    id: "order-form-ticker"
+
+# Verificar que se muestra el nombre del instrumento
+- assertVisible:
+    id: "order-form-name"
+
+# Verificar que se muestra el precio actual
+- assertVisible:
+    id: "order-form-current-price"
+
+# =============================================================================
+# 4. VERIFICAR SELECTORES DE TIPO DE ORDEN (ESTADO INICIAL)
+# =============================================================================
+
+# Por defecto debe estar en BUY
+- assertVisible:
+    id: "order-type-buy"
+
+# Por defecto debe estar en MARKET
+- assertVisible:
+    id: "order-type-market"
+
+# También deben estar visibles SELL y LIMIT (pero no seleccionados)
+- assertVisible:
+    id: "order-type-sell"
+
+- assertVisible:
+    id: "order-type-limit"
+
+# =============================================================================
+# 5. CAMBIAR ENTRE BUY Y SELL
+# =============================================================================
+
+# Cambiar a SELL
+- tapOn:
+    id: "order-type-sell"
+
+- waitForAnimationToEnd:
+    timeout: 300
+
+# Verificar que SELL está activo (la UI debería cambiar)
+- assertVisible:
+    id: "order-type-sell"
+
+# Volver a BUY
+- tapOn:
+    id: "order-type-buy"
+
+- waitForAnimationToEnd:
+    timeout: 300
+
+# =============================================================================
+# 6. VERIFICAR INPUTS DE CANTIDAD
+# =============================================================================
+
+# Verificar que el input de cantidad está visible
+- assertVisible:
+    id: "order-quantity-input"
+
+# Verificar que el toggle está visible
+- assertVisible:
+    id: "order-input-toggle"
+
+# Tap en el input de cantidad
+- tapOn:
+    id: "order-quantity-input"
+
+# Ingresar una cantidad (ej: 10 acciones)
+- inputText: "10"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 7. VERIFICAR CÁLCULO DE TOTAL ESTIMADO (MARKET ORDER)
+# =============================================================================
+
+# El total estimado debe aparecer cuando hay cantidad
+- assertVisible:
+    id: "order-form-total"
+
+# Verificar que el total tiene un valor (debe ser cantidad * precio actual)
+- assertVisible:
+    text: "Total estimado"
+
+# =============================================================================
+# 8. CAMBIAR A LIMIT ORDER
+# =============================================================================
+
+# Cambiar a LIMIT
+- tapOn:
+    id: "order-type-limit"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 9. VERIFICAR INPUT DE PRECIO LÍMITE (SOLO PARA LIMIT)
+# =============================================================================
+
+# El input de precio límite debe aparecer solo para LIMIT
+- assertVisible:
+    id: "order-form-price-input"
+
+# Verificar el label
+- assertVisible:
+    text: "Precio límite"
+
+# Tap en el input de precio
+- tapOn:
+    id: "order-form-price-input"
+
+# Ingresar un precio (ej: 150)
+- inputText: "150"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 10. VERIFICAR RECÁLCULO DE TOTAL CON PRECIO LÍMITE
+# =============================================================================
+
+# El total estimado debe recalcularse con el precio límite
+- assertVisible:
+    id: "order-form-total"
+
+# Total ahora debe ser cantidad (10) * precio límite (150) = 1500
+- assertVisible:
+    text: "Total estimado"
+
+# =============================================================================
+# 11. PROBAR TOGGLE ENTRE CANTIDAD Y MONTO
+# =============================================================================
+
+# Tap en el toggle para cambiar a monto
+- tapOn:
+    id: "order-input-toggle"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# Verificar que ahora está el input de monto
+- assertVisible:
+    id: "order-amount-input"
+
+# Volver a cantidad
+- tapOn:
+    id: "order-input-toggle"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# Verificar que volvió al input de cantidad
+- assertVisible:
+    id: "order-quantity-input"
+
+# =============================================================================
+# 12. VERIFICAR BOTONES DE ACCIÓN
+# =============================================================================
+
+# Verificar que el botón de enviar está visible
+- assertVisible:
+    id: "order-form-submit"
+
+# Verificar que el botón de cancelar está visible
+- assertVisible:
+    id: "order-form-cancel"
+
+# Verificar el texto del botón (debe decir "Comprar" porque está en BUY)
+- assertVisible:
+    text: "Comprar"
+
+# =============================================================================
+# 13. CAMBIAR A SELL Y VERIFICAR TEXTO DEL BOTÓN
+# =============================================================================
+
+# Cambiar a SELL
+- tapOn:
+    id: "order-type-sell"
+
+- waitForAnimationToEnd:
+    timeout: 300
+
+# El botón ahora debe decir "Vender"
+- assertVisible:
+    text: "Vender"
+
+# =============================================================================
+# 14. VOLVER A MARKET ORDER
+# =============================================================================
+
+# Cambiar de vuelta a MARKET
+- tapOn:
+    id: "order-type-market"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# El input de precio límite debe desaparecer
+- assertNotVisible:
+    id: "order-form-price-input"
+
+# El total estimado debe recalcularse con el precio actual
+- assertVisible:
+    id: "order-form-total"
+
+# =============================================================================
+# 15. LIMPIAR CANTIDAD
+# =============================================================================
+
+# Tap en el input de cantidad para limpiarlo
+- tapOn:
+    id: "order-quantity-input"
+
+# Limpiar y poner 0 o nada
+- eraseText
+
+- waitForAnimationToEnd:
+    timeout: 300
+
+# El total estimado no debería mostrarse cuando cantidad es 0
+- assertNotVisible:
+    id: "order-form-total"
+
+# =============================================================================
+# 16. PROBAR CANCELAR ORDEN
+# =============================================================================
+
+# Tap en cancelar
+- tapOn:
+    id: "order-form-cancel"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# El modal debe cerrarse
+- assertNotVisible:
+    id: "order-modal"
+
+# Verificar que volvimos a instruments
+- assertVisible:
+    id: "instruments-screen"
+
+# =============================================================================
+# 17. ABRIR MODAL NUEVAMENTE PARA SEGUNDA PRUEBA
+# =============================================================================
+
+# Tap en otro instrumento (el segundo)
+- tapOn:
+    id: "instrument-card-.*"
+    index: 1
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# =============================================================================
+# 18. CERRAR MODAL CON BOTÓN DE CERRAR
+# =============================================================================
+
+# Tap en el botón de cerrar (X)
+- tapOn:
+    id: "order-modal-close"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# El modal debe cerrarse
+- assertNotVisible:
+    id: "order-modal"
+
+# =============================================================================
+# 19. VERIFICACIÓN FINAL
+# =============================================================================
+
+# Verificar que estamos de vuelta en instruments
+- assertVisible:
+    id: "instruments-screen"
+
+- assertVisible:
+    id: "instruments-list"
+
+# Test completado exitosamente

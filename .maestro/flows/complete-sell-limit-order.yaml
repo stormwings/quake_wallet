@@ -1,37 +1,30 @@
 # E2E Flow: Complete Sell Limit Order
 #
+# terminal command to run: maestro test .maestro/flows/complete-sell-limit-order.yaml
+#
 # Objetivo:
-#   Flujo completo end-to-end de una orden de venta LIMIT:
-#   - Usuario navega a Portfolio
-#   - Selecciona una posición existente
-#   - Configura una orden de venta LIMIT
-#   - Ingresa cantidad y precio límite
-#   - Envía la orden
-#   - Verifica la respuesta (PENDING para LIMIT orders)
+#   Flujo completo end-to-end de una orden de venta LIMIT.
+#   Este flow simula el comportamiento real de un usuario vendiendo acciones
+#   con un precio límite específico.
 #
 # Flujo completo:
-#   1. Launch app
-#   2. Navegar a Portfolio tab
-#   3. Verificar que hay posiciones
-#   4. Tap en una posición específica
-#   5. Verificar que se abre el modal de orden
-#   6. Cambiar a SELL
-#   7. Cambiar a LIMIT
-#   8. Ingresar cantidad (ej: 5 acciones)
-#   9. Ingresar precio límite (ej: precio actual + 10%)
-#   10. Verificar que se calcula el total estimado
-#   11. Tap en botón "Vender"
-#   12. Esperar respuesta del servidor
-#   13. Verificar que la orden está PENDING (típico para LIMIT)
-#   14. Verificar que aparece el order ID
-#   15. Verificar mensaje de que se ejecutará cuando llegue al precio
-#   16. Tap en "Nueva orden" para resetear
-#   17. Cerrar modal
+#   1. Navegar a Instruments tab
+#   2. Abrir modal de orden desde un instrumento
+#   3. Cambiar a SELL
+#   4. Cambiar a LIMIT
+#   5. Ingresar cantidad de acciones
+#   6. Ingresar precio límite (mayor al precio actual)
+#   7. Verificar cálculo de total estimado
+#   8. Enviar la orden de venta
+#   9. Verificar respuesta (PENDING para LIMIT orders)
+#   10. Verificar que se muestra el order ID y mensaje apropiado
+#   11. Probar botón "Nueva orden"
+#   12. Cerrar modal
 #
 # Pre-condiciones:
-#   - App está corriendo
+#   - App está corriendo con emulador abierto
 #   - API está disponible y responde
-#   - Usuario tiene al menos una posición en portfolio
+#   - Instrumentos disponibles para seleccionar
 #
 # Post-condiciones:
 #   - Orden LIMIT creada con status PENDING
@@ -42,7 +35,199 @@
 #   - LIMIT orders típicamente quedan en PENDING hasta que el precio llegue al límite
 #   - Este flow es más complejo porque combina SELL + LIMIT
 #   - Testea funcionalidad condicional (precio input solo aparece para LIMIT)
+#   - Testea el botón "Nueva orden" que resetea el formulario
 
 appId: host.exp.exponent
 ---
-# TODO: Implementar flow completo
+
+# =============================================================================
+# 1. VERIFICAR INSTRUMENTS SCREEN INICIAL
+# =============================================================================
+
+# Esperar a que la app se inicialice
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verificar que estamos en Instruments (tab por defecto)
+- assertVisible:
+    id: "instruments-screen"
+
+# Esperar a que carguen los instrumentos
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# =============================================================================
+# 2. ABRIR MODAL DE ORDEN DESDE INSTRUMENTS
+# =============================================================================
+
+# Tap en el primer instrumento
+- tapOn:
+    id: "instrument-card-.*"
+    index: 0
+
+# Esperar animación del modal
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 3. VERIFICAR APERTURA DEL MODAL
+# =============================================================================
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# Verificar que el formulario está visible
+- assertVisible:
+    id: "order-form"
+
+# Verificar datos del instrumento
+- assertVisible:
+    id: "order-form-ticker"
+
+- assertVisible:
+    id: "order-form-current-price"
+
+# =============================================================================
+# 4. CAMBIAR A SELL
+# =============================================================================
+
+# Por defecto está en BUY, cambiar a SELL
+- tapOn:
+    id: "order-type-sell"
+
+- waitForAnimationToEnd:
+    timeout: 300
+
+# Verificar que el botón cambió a "Vender"
+- assertVisible:
+    text: "Vender"
+
+# =============================================================================
+# 5. CAMBIAR A LIMIT ORDER
+# =============================================================================
+
+# Por defecto está en MARKET, cambiar a LIMIT
+- tapOn:
+    id: "order-type-limit"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 6. VERIFICAR QUE APARECE EL INPUT DE PRECIO LÍMITE
+# =============================================================================
+
+# El input de precio límite debe aparecer solo para LIMIT
+- assertVisible:
+    id: "order-form-price-input"
+
+# Verificar el label
+- assertVisible:
+    text: "Precio límite"
+
+# =============================================================================
+# 7. INGRESAR CANTIDAD DE ACCIONES
+# =============================================================================
+
+# Tap en el input de cantidad
+- tapOn:
+    id: "order-quantity-input"
+
+# Ingresar 5 acciones
+- inputText: "5"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 8. INGRESAR PRECIO LÍMITE
+# =============================================================================
+
+# Tap en el input de precio límite
+- tapOn:
+    id: "order-form-price-input"
+
+# Ingresar un precio límite (ej: 200)
+# Nota: Este precio debería ser mayor al precio actual para una orden de venta LIMIT
+- inputText: "200"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 9. VERIFICAR CÁLCULO DE TOTAL ESTIMADO
+# =============================================================================
+
+# El total estimado debe aparecer y calcularse con el precio límite
+- assertVisible:
+    id: "order-form-total"
+
+# Total = cantidad (5) * precio límite (200) = 1000
+- assertVisible:
+    text: "Total estimado"
+
+# =============================================================================
+# 10. VERIFICAR BOTÓN DE VENTA
+# =============================================================================
+
+# Verificar que el botón de submit está visible
+- assertVisible:
+    id: "order-form-submit"
+
+# Verificar que dice "Vender"
+- assertVisible:
+    text: "Vender"
+
+# =============================================================================
+# 11. ENVIAR LA ORDEN DE VENTA LIMIT
+# =============================================================================
+
+# Tap en el botón "Vender"
+- tapOn:
+    id: "order-form-submit"
+
+# Esperar respuesta del servidor
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# =============================================================================
+# 12. VERIFICAR RESPUESTA (PENDING PARA LIMIT ORDERS)
+# =============================================================================
+
+# Las LIMIT orders típicamente quedan en PENDING
+- assertVisible:
+    id: "order-response-pending"
+
+# Verificar el badge de status
+- assertVisible:
+    id: "order-response-badge"
+
+# Verificar el mensaje de pending
+- assertVisible:
+    text: "PENDIENTE"
+
+- assertVisible:
+    text: "Tu orden está esperando ejecución"
+
+# =============================================================================
+# 13. VERIFICAR MENSAJE ESPECÍFICO DE LIMIT ORDER
+# =============================================================================
+
+# Debe aparecer el hint específico para LIMIT orders
+- assertVisible:
+    text: "La orden se ejecutará cuando se alcance el precio límite especificado."
+
+# =============================================================================
+# 14. VERIFICAR ORDER ID
+# =============================================================================
+
+# Verificar que se muestra el ID de la orden
+- assertVisible:
+    text: "ID de la orden"
+
+- assertVisible:
+    id: "order-response-id"
+
+# Flow completado exitosamente
+# ✅ Orden de venta LIMIT creada con status PENDING

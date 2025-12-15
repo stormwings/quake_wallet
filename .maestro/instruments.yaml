@@ -25,9 +25,6 @@ appId: host.exp.exponent
 # 1. LAUNCH & INITIAL LOAD
 # =============================================================================
 
-# - launchApp
-# - openLink: "exp://192.168.1.4:8081"
-
 # Esperar a que la app se inicialice y cargue
 - waitForAnimationToEnd:
     timeout: 3000

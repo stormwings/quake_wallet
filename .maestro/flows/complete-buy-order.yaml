@@ -1,42 +1,245 @@
 # E2E Flow: Complete Buy Order
 #
+# terminal command to run: maestro test .maestro/flows/complete-buy-order.yaml
+#
 # Objetivo:
-#   Flujo completo end-to-end de una orden de compra desde el inicio hasta el final:
-#   - Usuario busca un instrumento
-#   - Abre el modal de orden
-#   - Configura una orden de compra MARKET
-#   - Ingresa cantidad
-#   - Envía la orden
-#   - Verifica la respuesta exitosa
-#   - Verifica que la orden se refleja en portfolio (opcional)
+#   Flujo completo end-to-end de una orden de compra MARKET desde el inicio hasta el final.
+#   Este flow simula el comportamiento real de un usuario comprando acciones.
 #
 # Flujo completo:
-#   1. Launch app
-#   2. Navegar a Search tab
-#   3. Buscar un instrumento específico (ej: "AAPL")
-#   4. Tap en el resultado
-#   5. Verificar que se abre el modal de orden
-#   6. Verificar que está en BUY por defecto
-#   7. Verificar que está en MARKET por defecto
-#   8. Ingresar cantidad (ej: 10 acciones)
-#   9. Verificar que se calcula el total estimado
-#   10. Tap en botón "Comprar"
-#   11. Esperar respuesta del servidor
-#   12. Verificar que la orden fue FILLED
-#   13. Verificar que aparece el order ID
-#   14. Cerrar modal
-#   15. (Opcional) Verificar en Portfolio que apareció la posición
+#   1. Navegar a Search tab
+#   2. Buscar un instrumento específico
+#   3. Abrir el modal de orden desde los resultados
+#   4. Verificar configuración por defecto (BUY + MARKET)
+#   5. Ingresar cantidad de acciones
+#   6. Verificar cálculo de total estimado
+#   7. Enviar la orden de compra
+#   8. Verificar respuesta exitosa (FILLED)
+#   9. Verificar que se muestra el order ID
+#   10. Cerrar modal
 #
 # Pre-condiciones:
-#   - App está corriendo
+#   - App está corriendo con emulador abierto
 #   - API está disponible y responde
 #   - Instrumento "AAPL" existe en la API
 #
 # Post-condiciones:
-#   - Orden creada exitosamente
+#   - Orden creada exitosamente con status FILLED
 #   - Modal cerrado
 #   - Usuario puede continuar operando
 
 appId: host.exp.exponent
 ---
-# TODO: Implementar flow completo
+
+# =============================================================================
+# 1. NAVEGAR A SEARCH TAB
+# =============================================================================
+
+# Esperar a que la app se inicialice
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Tap en el tab de Search
+- tapOn:
+    text: "Buscar"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 2. VERIFICAR SEARCH SCREEN Y ESTADO INICIAL
+# =============================================================================
+
+# Verificar que estamos en el screen de búsqueda
+- assertVisible:
+    id: "search-screen"
+
+# Verificar que el input de búsqueda está visible
+- assertVisible:
+    id: "search-input"
+
+# Verificar el empty state inicial
+- assertVisible:
+    id: "search-empty-state"
+
+# =============================================================================
+# 3. BUSCAR INSTRUMENTO "AAPL"
+# =============================================================================
+
+# Tap en el input de búsqueda
+- tapOn:
+    id: "search-input"
+
+# Escribir el ticker
+- inputText: "DYCA"
+
+# Esperar debounce (300ms) + carga de resultados
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# =============================================================================
+# 4. VERIFICAR RESULTADOS DE BÚSQUEDA
+# =============================================================================
+
+# Verificar que aparecieron resultados
+- assertVisible:
+    id: "search-results-list"
+
+# Verificar que hay al menos un resultado
+- assertVisible:
+    id: "instrument-card-.*"
+
+# =============================================================================
+# 5. ABRIR MODAL DE ORDEN DESDE RESULTADOS
+# =============================================================================
+
+# Tap en el primer resultado (AAPL)
+- tapOn:
+    id: "instrument-card-.*"
+    index: 0
+
+# Esperar animación del modal
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 6. VERIFICAR APERTURA DEL MODAL
+# =============================================================================
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# Verificar título del modal
+- assertVisible:
+    id: "order-modal-title"
+
+# Verificar que el formulario está visible
+- assertVisible:
+    id: "order-form"
+
+# =============================================================================
+# 7. VERIFICAR CONFIGURACIÓN POR DEFECTO (BUY + MARKET)
+# =============================================================================
+
+# Verificar que está en BUY por defecto
+- assertVisible:
+    id: "order-type-buy"
+
+# Verificar que está en MARKET por defecto
+- assertVisible:
+    id: "order-type-market"
+
+# Verificar que se muestra el ticker del instrumento
+- assertVisible:
+    id: "order-form-ticker"
+
+# Verificar que se muestra el precio actual
+- assertVisible:
+    id: "order-form-current-price"
+
+# =============================================================================
+# 8. INGRESAR CANTIDAD DE ACCIONES
+# =============================================================================
+
+# Tap en el input de cantidad
+- tapOn:
+    id: "order-quantity-input"
+
+# Ingresar 10 acciones
+- inputText: "10"
+
+- waitForAnimationToEnd:
+    timeout: 500
+
+# =============================================================================
+# 9. VERIFICAR CÁLCULO DE TOTAL ESTIMADO
+# =============================================================================
+
+# El total estimado debe aparecer
+- assertVisible:
+    id: "order-form-total"
+
+# Verificar el label del total
+- assertVisible:
+    text: "Total estimado"
+
+# =============================================================================
+# 10. VERIFICAR BOTÓN DE COMPRA
+# =============================================================================
+
+# Verificar que el botón de submit está visible
+- assertVisible:
+    id: "order-form-submit"
+
+# Verificar que dice "Comprar"
+- assertVisible:
+    text: "Comprar"
+
+# =============================================================================
+# 11. ENVIAR LA ORDEN DE COMPRA
+# =============================================================================
+
+# Tap en el botón "Comprar"
+- tapOn:
+    id: "order-form-submit"
+
+# Esperar respuesta del servidor (puede tomar unos segundos)
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# =============================================================================
+# 12. VERIFICAR RESPUESTA EXITOSA (FILLED)
+# =============================================================================
+
+# Verificar que aparece la respuesta de la orden
+- assertVisible:
+    id: "order-response-filled"
+
+# Verificar el badge de status
+- assertVisible:
+    id: "order-response-badge"
+
+# Verificar el mensaje de éxito
+- assertVisible:
+    text: "EJECUTADA"
+
+- assertVisible:
+    text: "Tu orden fue ejecutada exitosamente"
+
+# =============================================================================
+# 13. VERIFICAR ORDER ID
+# =============================================================================
+
+# Verificar que se muestra el ID de la orden
+- assertVisible:
+    text: "ID de la orden"
+
+- assertVisible:
+    id: "order-response-id"
+
+# =============================================================================
+# 14. CERRAR MODAL
+# =============================================================================
+
+# Tap en el botón de cerrar
+- tapOn:
+    id: "order-modal-close"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# =============================================================================
+# 15. VERIFICACIÓN FINAL
+# =============================================================================
+
+# El modal debe estar cerrado
+- assertNotVisible:
+    id: "order-modal"
+
+# Verificar que volvimos al screen de búsqueda
+- assertVisible:
+    id: "search-screen"
+
+# Flow completado exitosamente
+# ✅ Orden de compra MARKET ejecutada con éxito

@@ -57,11 +57,14 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       testID="search-results-list"
       data={results}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <InstrumentCard instrument={item} onPress={() => onResultPress(item)} />
+      renderItem={({ item, index }) => (
+        <View testID={`search-result-item-${index}`}>
+          <InstrumentCard instrument={item} onPress={() => onResultPress(item)} />
+        </View>
       )}
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}
+      removeClippedSubviews={false}
     />
   );
 };
