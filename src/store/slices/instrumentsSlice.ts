@@ -2,9 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Instrument, SliceState } from '../../types';
 import { instrumentsApi } from '../../services';
 
-interface InstrumentsState extends SliceState<Instrument[]> {}
-
-const initialState: InstrumentsState = {
+const initialState: SliceState<Instrument[]> = {
   data: null,
   loading: false,
   error: null,

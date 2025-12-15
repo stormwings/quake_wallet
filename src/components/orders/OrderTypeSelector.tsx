@@ -22,6 +22,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
 
         <View style={styles.pillWrap}>
           <TouchableOpacity
+            testID="order-type-buy"
             style={[styles.pillBtn, side === "BUY" && styles.pillActiveBuy]}
             onPress={() => onSideChange("BUY")}
             activeOpacity={0.85}
@@ -32,6 +33,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="order-type-sell"
             style={[styles.pillBtn, side === "SELL" && styles.pillActiveSell]}
             onPress={() => onSideChange("SELL")}
             activeOpacity={0.85}
@@ -48,6 +50,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
 
         <View style={styles.miniSegWrap}>
           <TouchableOpacity
+            testID="order-type-market"
             style={[styles.miniSegBtn, type === "MARKET" && styles.miniSegActive]}
             onPress={() => onTypeChange("MARKET")}
             activeOpacity={0.85}
@@ -58,6 +61,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="order-type-limit"
             style={[styles.miniSegBtn, type === "LIMIT" && styles.miniSegActive]}
             onPress={() => onTypeChange("LIMIT")}
             activeOpacity={0.85}

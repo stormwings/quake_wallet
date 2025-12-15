@@ -49,7 +49,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View testID="search-screen" style={styles.container}>
       <SearchInput
         value={query}
         onChangeText={setQuery}

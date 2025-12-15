@@ -81,18 +81,20 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   const submitLabel = watchedSide === "BUY" ? "Comprar" : "Vender";
 
   return (
-    <View style={styles.container}>
+    <View testID="order-form" style={styles.container}>
       <View style={styles.instrumentRow}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.ticker}>{instrument.ticker}</Text>
-          <Text style={styles.name} numberOfLines={1}>
+          <Text testID="order-form-ticker" style={styles.ticker}>
+            {instrument.ticker}
+          </Text>
+          <Text testID="order-form-name" style={styles.name} numberOfLines={1}>
             {instrument.name}
           </Text>
         </View>
 
         <View style={styles.priceBox}>
           <Text style={styles.priceLabel}>Precio actual</Text>
-          <Text style={styles.priceValue}>
+          <Text testID="order-form-current-price" style={styles.priceValue}>
             {formatCurrency(instrument.last_price)}
           </Text>
         </View>
@@ -147,6 +149,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           <View style={styles.inputWrap}>
             <Text style={styles.prefix}>$</Text>
             <TextInput
+              testID="order-form-price-input"
               style={styles.input}
               value={priceText}
               onChangeText={handlePriceChange}
@@ -164,7 +167,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       )}
 
       {watchedQuantity > 0 && (
-        <View style={styles.totalBox}>
+        <View testID="order-form-total" style={styles.totalBox}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Ionicons
               name="calculator-outline"
@@ -181,6 +184,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
       <View style={styles.actions}>
         <TouchableOpacity
+          testID="order-form-cancel"
           style={[styles.btn, styles.btnSecondary]}
           onPress={onCancel}
           disabled={loading}
@@ -190,6 +194,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </TouchableOpacity>
 
         <TouchableOpacity
+          testID="order-form-submit"
           style={[
             styles.btn,
             watchedSide === "BUY" ? styles.btnBuy : styles.btnSell,

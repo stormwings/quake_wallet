@@ -25,6 +25,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         </View>
 
         <TextInput
+          testID="search-input"
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
@@ -37,6 +38,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
         {value.length > 0 && (
           <TouchableOpacity
+            testID="search-input-clear"
             onPress={handleClear}
             style={styles.clearButton}
             activeOpacity={0.7}

@@ -1,0 +1,241 @@
+# E2E Test: Instruments Screen
+#
+# terminal command to run: maestro test .maestro/instruments.yaml
+#
+# Objetivo:
+#   Verificar que el módulo de Instrumentos funciona correctamente
+#   incluyendo carga de datos, visualización, interacción y navegación
+#
+# Casos cubiertos:
+#   - App lanza correctamente
+#   - Screen de instrumentos se carga
+#   - Lista de instrumentos se muestra
+#   - Datos de instrumentos se muestran correctamente
+#   - Scroll funciona
+#   - Pull-to-refresh funciona
+#   - Tap en instrumento abre modal de orden
+#   - Modal se puede cerrar
+#   - Verificación de múltiples instrumentos
+#   - Verificación de elementos individuales de cards
+
+appId: host.exp.exponent
+---
+
+# =============================================================================
+# 1. LAUNCH & INITIAL LOAD
+# =============================================================================
+
+# - launchApp
+# - openLink: "exp://192.168.1.4:8081"
+
+# Esperar a que la app se inicialice y cargue
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verificar que el screen de instrumentos está visible
+- assertVisible:
+    id: "instruments-screen"
+
+# Verificar que la lista está presente
+- assertVisible:
+    id: "instruments-list"
+
+# Esperar a que carguen los datos de la API
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# =============================================================================
+# 2. VERIFICAR CARGA DE INSTRUMENTOS
+# =============================================================================
+
+# Verificar que al menos un instrumento se cargó
+# Usamos regex para verificar cualquier ticker dinámico
+- assertVisible:
+    id: "instrument-card-.*"
+
+# Verificar que múltiples instrumentos están visibles
+# Al menos 2 instrumentos deberían estar en pantalla inicialmente
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 0
+
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 1
+
+# =============================================================================
+# 3. VERIFICAR ESTRUCTURA DE UN INSTRUMENT CARD
+# =============================================================================
+
+# Verificar todos los elementos del primer instrumento
+# Nota: No verificamos el texto específico, solo que los elementos existen
+
+# Ticker del instrumento
+- assertVisible:
+    id: "instrument-card-ticker"
+    index: 0
+
+# Nombre del instrumento
+- assertVisible:
+    id: "instrument-card-name"
+    index: 0
+
+# Precio del instrumento
+- assertVisible:
+    id: "instrument-card-price"
+    index: 0
+
+# Retorno/cambio porcentual
+- assertVisible:
+    id: "instrument-card-return"
+    index: 0
+
+# Ícono del instrumento
+- assertVisible:
+    id: "instrument-card-icon"
+    index: 0
+
+# =============================================================================
+# 4. VERIFICAR SCROLL
+# =============================================================================
+
+# Scroll hacia abajo para ver más instrumentos
+- scroll
+
+# Verificar que hay más instrumentos después del scroll
+# El índice 5 debería existir si hay suficientes instrumentos
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 5
+    optional: true
+
+# Scroll más para verificar lista larga
+- scroll
+
+# =============================================================================
+# 5. VERIFICAR PULL-TO-REFRESH
+# =============================================================================
+
+# Hacer pull-to-refresh (swipe down desde arriba)
+- swipe:
+    start: 50%, 20%
+    end: 50%, 80%
+
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Verificar que la lista todavía está visible después del refresh
+- assertVisible:
+    id: "instruments-list"
+
+# Verificar que los instrumentos todavía están ahí
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 0
+
+# =============================================================================
+# 6. VERIFICAR APERTURA DE MODAL DE ORDEN
+# =============================================================================
+
+# Tap en el primer instrumento
+- tapOn:
+    id: "instrument-card-.*"
+    index: 0
+
+# Esperar animación del modal
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal se abrió
+- assertVisible:
+    id: "order-modal"
+
+# Verificar que el título del modal está visible
+- assertVisible:
+    id: "order-modal-title"
+
+# Verificar que el formulario de orden está visible
+- assertVisible:
+    id: "order-form"
+
+# Verificar elementos clave del formulario
+- assertVisible:
+    id: "order-form-ticker"
+
+- assertVisible:
+    id: "order-form-current-price"
+
+- assertVisible:
+    id: "order-type-buy"
+
+- assertVisible:
+    id: "order-type-market"
+
+# =============================================================================
+# 7. VERIFICAR CIERRE DE MODAL
+# =============================================================================
+
+# Cerrar el modal usando el botón de cerrar
+- tapOn:
+    id: "order-modal-close"
+
+# Esperar a que el modal se cierre
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal ya no está visible
+- assertNotVisible:
+    id: "order-modal"
+
+# Verificar que volvimos a la lista de instrumentos
+- assertVisible:
+    id: "instruments-screen"
+
+- assertVisible:
+    id: "instruments-list"
+
+# =============================================================================
+# 8. VERIFICAR INTERACCIÓN CON OTRO INSTRUMENTO
+# =============================================================================
+
+# Tap en el segundo instrumento para verificar que también funciona
+- tapOn:
+    id: "instrument-card-.*"
+    index: 1
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal se abrió nuevamente
+- assertVisible:
+    id: "order-modal"
+
+# Cerrar usando el backdrop (tap fuera del modal)
+- tapOn:
+    point: "50%,10%"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Verificar que el modal se cerró
+- assertNotVisible:
+    id: "order-modal"
+
+# =============================================================================
+# 9. VERIFICACIÓN FINAL
+# =============================================================================
+
+# Verificar que la lista todavía está funcional después de todas las interacciones
+- assertVisible:
+    id: "instruments-list"
+
+# Verificar que los instrumentos siguen cargados
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 0
+
+- assertVisible:
+    id: "instrument-card-.*"
+    index: 1
+
+# Test completado exitosamente

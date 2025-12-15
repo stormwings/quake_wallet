@@ -13,7 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppDispatch, useAppSelector } from "../../store";
-import { clearResponse, createOrder } from "../../store/slices";
+import { clearOrdersResponse, createOrder } from "../../store/slices";
 import { Instrument, OrderRequest } from "../../types";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
@@ -34,7 +34,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   const { loading, error, response } = useAppSelector((state) => state.orders);
 
   useEffect(() => {
-    if (visible && instrument) dispatch(clearResponse());
+    if (visible && instrument) dispatch(clearOrdersResponse());
   }, [visible, instrument, dispatch]);
 
   const handleSubmit = (orderData: OrderRequest) => {
@@ -42,18 +42,19 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   };
 
   const handleClose = () => {
-    dispatch(clearResponse());
+    dispatch(clearOrdersResponse());
     onClose();
   };
 
   const handleNewOrder = () => {
-    dispatch(clearResponse());
+    dispatch(clearOrdersResponse());
   };
 
   if (!instrument) return null;
 
   return (
     <Modal
+      testID="order-modal"
       visible={visible}
       animationType="slide"
       transparent
@@ -77,11 +78,12 @@ export const OrderModal: React.FC<OrderModalProps> = ({
           </View>
 
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>
+            <Text testID="order-modal-title" style={styles.headerTitle}>
               {response ? "Resultado de la orden" : "Nueva orden"}
             </Text>
 
             <TouchableOpacity
+              testID="order-modal-close"
               onPress={handleClose}
               style={styles.closeBtn}
               activeOpacity={0.7}
@@ -102,6 +104,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 <OrderResponse orderId={response.id} status={response.status} />
 
                 <TouchableOpacity
+                  testID="order-modal-new-order"
                   style={styles.primaryBtn}
                   onPress={handleNewOrder}
                   activeOpacity={0.85}
@@ -119,7 +122,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                 />
 
                 {error && (
-                  <View style={styles.errorBox}>
+                  <View testID="order-modal-error" style={styles.errorBox}>
                     <Ionicons
                       name="alert-circle-outline"
                       size={16}

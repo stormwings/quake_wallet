@@ -8,10 +8,14 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
   return (
-    <View style={styles.container}>
+    <View testID="error-message" style={styles.container}>
       <Text style={styles.errorText}>{message}</Text>
       {onRetry && (
-        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+        <TouchableOpacity
+          testID="error-retry-button"
+          style={styles.retryButton}
+          onPress={onRetry}
+        >
           <Text style={styles.retryText}>Retry</Text>
         </TouchableOpacity>
       )}

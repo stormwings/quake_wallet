@@ -67,6 +67,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
         </Text>
 
         <TouchableOpacity
+          testID="order-input-toggle"
           onPress={handleToggleMode}
           activeOpacity={0.85}
           style={styles.toggleBtn}
@@ -83,6 +84,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
       {inputMode === "quantity" ? (
         <View style={styles.inputWrap}>
           <TextInput
+            testID="order-quantity-input"
             style={styles.input}
             value={quantityText}
             onChangeText={handleQuantityChange}
@@ -98,6 +100,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
           <View style={styles.inputWrap}>
             <Text style={styles.prefix}>$</Text>
             <TextInput
+              testID="order-amount-input"
               style={styles.input}
               value={amountText}
               onChangeText={handleAmountChange}
@@ -109,7 +112,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
           </View>
 
           {quantity > 0 && (
-            <View style={styles.infoBox}>
+            <View testID="order-quantity-calculated" style={styles.infoBox}>
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >

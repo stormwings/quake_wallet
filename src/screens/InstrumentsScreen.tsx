@@ -43,8 +43,9 @@ export default function InstrumentsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View testID="instruments-screen" style={styles.container}>
       <FlatList
+        testID="instruments-list"
         data={instruments}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (

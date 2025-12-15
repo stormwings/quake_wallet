@@ -15,8 +15,9 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
   const cfg = getStatusConfig(status);
 
   return (
-    <View style={styles.container}>
+    <View testID={`order-response-${status.toLowerCase()}`} style={styles.container}>
       <View
+        testID="order-response-badge"
         style={[
           styles.badge,
           { backgroundColor: cfg.bg, borderColor: cfg.border },
@@ -32,7 +33,9 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
 
       <View style={styles.infoBox}>
         <Text style={styles.infoLabel}>ID de la orden</Text>
-        <Text style={styles.infoValue}>{orderId}</Text>
+        <Text testID="order-response-id" style={styles.infoValue}>
+          {orderId}
+        </Text>
       </View>
 
       {status === "PENDING" && (

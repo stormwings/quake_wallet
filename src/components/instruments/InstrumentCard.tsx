@@ -17,24 +17,30 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
   const isPositive = returnValue >= 0;
 
   return (
-    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity
+      testID={`instrument-card-${instrument.ticker}`}
+      style={styles.row}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
       <View style={styles.left}>
-        <View style={styles.iconCircle}>
+        <View style={styles.iconCircle} testID="instrument-card-icon">
           <Text style={styles.iconText}>{instrument.ticker?.slice(0, 2)}</Text>
         </View>
       </View>
 
       <View style={styles.center}>
-        <Text style={styles.ticker} numberOfLines={1}>
+        <Text testID="instrument-card-ticker" style={styles.ticker} numberOfLines={1}>
           {instrument.ticker}
         </Text>
-        <Text style={styles.name} numberOfLines={1}>
+        <Text testID="instrument-card-name" style={styles.name} numberOfLines={1}>
           {instrument.name}
         </Text>
       </View>
 
       <View style={styles.right}>
         <Text
+          testID="instrument-card-return"
           style={[
             styles.change,
             isPositive ? styles.positive : styles.negative,
@@ -42,7 +48,7 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
         >
           {formatPercentage(returnValue)}
         </Text>
-        <Text style={styles.price} numberOfLines={1}>
+        <Text testID="instrument-card-price" style={styles.price} numberOfLines={1}>
           {formatCurrency(instrument.last_price)}
         </Text>
       </View>
