@@ -1,113 +1,62 @@
-# Quake Wallet [v1.3.0]
+# Quake Wallet
 
-Aplicación móvil desarrollada en React Native para visualizar instrumentos financieros, gestionar portafolios de inversión y enviar órdenes de compra/venta al mercado.
+MVP móvil en React Native + Expo para ver instrumentos, revisar portafolio y enviar órdenes de compra/venta. Usa precios en ARS y un backend público (`dummy-api-topaz.vercel.app`).
 
-## Descripción
+## Features (MVP)
+- **Instruments**: lista desde `/instruments` con `ticker`, `name`, `last_price`, `close_price`, retorno calculado (`calculateReturn`).
+- **Portfolio**: muestra `quantity`, `avg_cost_price`, `last_price`, market value y ganancias/%. Valores calculados en `src/utils/calculations`.
+- **Search**: búsqueda por ticker via `GET /search?query=` con debounce de 300 ms.
+- **Orders**: modal/formulario (BUY/SELL + MARKET/LIMIT). LIMIT requiere `price`; MARKET no. Convierte monto a cantidad con `Math.floor(amount / price)`. Muestra `id` y `status` de la respuesta.
 
-Quake Wallet permite a los inversores:
-- Visualizar instrumentos financieros con precios y retornos en tiempo real
-- Consultar su portafolio personal con ganancias y rendimientos
-- Buscar activos por ticker
-- Enviar órdenes de compra y venta (MARKET y LIMIT)
-- Monitorear el estado de las órdenes enviadas
+## Reglas de negocio clave
+- Retorno: `((last_price - close_price) / close_price) * 100`
+- Market value: `quantity * last_price`
+- Profit: `(last_price - avg_cost_price) * quantity`
+- Profit %: `((last_price - avg_cost_price) / avg_cost_price) * 100`
+- Estados de órdenes: LIMIT → `PENDING | REJECTED`; MARKET → `FILLED | REJECTED`
 
-## Stack Tecnológico
+## Stack
+- Expo + React Native (TypeScript)
+- React Navigation (bottom tabs)
+- Redux Toolkit
+- React Hook Form + Zod
+- Axios
+- Dinero.js, moment
 
-- **React Native** con Expo
-- **TypeScript** para tipado estático
-- **Redux Toolkit** para gestión de estado
-- **React Hook Form + Zod** para formularios y validación
-- **Axios** para llamadas HTTP
-- **Jest** y **React Native Testing Library** para testing
-
-## Documentación
-
-- [Requerimientos](./01_requerimientos.md) - Especificaciones iniciales del proyecto
-- [Plan del Proyecto](./02_project_plan.md) - Documentación técnica completa
-
-## Instalación
-
+## Cómo correr el proyecto
 ```bash
-npm install
+# instalar (usa el lockfile existente)
+npm ci
+
+# levantar el dev server (Expo Go / emulador)
+npm run start
+# atajos: npm run android | npm run ios | npm run web
 ```
 
-## Desarrollo
-
-```bash
-npx expo start
-```
-
-Opciones para ejecutar la app:
-- Presiona `a` para Android emulator
-- Presiona `i` para iOS simulator
-- Escanea el QR con Expo Go en tu dispositivo
-
-## Estructura del Proyecto
-
-El proyecto sigue una arquitectura **Layer-First**:
-- `src/components/` - Componentes UI reutilizables
-- `src/screens/` - Pantallas principales
-- `src/store/` - Estado global con Redux
-- `src/services/` - Llamadas a API
-- `src/utils/` - Funciones utilitarias
-- `src/types/` - Definiciones de TypeScript
+## Configuración de API
+- Base URL: `https://dummy-api-topaz.vercel.app` (`src/constants/api.constants.ts`)
+- Endpoints usados:
+  - `GET /instruments`
+  - `GET /portfolio`
+  - `GET /search?query={ticker}`
+  - `POST /orders`
+- Precios y montos en ARS.
 
 ## Testing
+- Unit/component tests: `npm test` (tests en `__tests__/unit` y `__tests__/components`).
+- E2E (Maestro): ver [`.maestro/README.md`](.maestro/README.md).
 
-```bash
-# Unit tests
-npm test
+## Arquitectura y estructura
+- Enfoque layer-first (`src/components`, `src/screens`, `src/navigation`, `src/store`, `src/services`, `src/schemas`, `src/types`, `src/utils`, `src/i18n`).
+- Cálculos y formateos en `src/utils/`; constantes de API en `src/constants/`; i18n y copy en `src/i18n/`.
+- Punto de entrada: `index.js` → `App.tsx` (Redux + LocaleProvider + Navigation).
 
-# E2E tests
-npm run test:e2e
-```
+## Calidad y tooling
+- Linter: `npm run lint`.
+- Husky (`prepare`) instala hooks: pre-commit/pre-push ejecutan lint + tests en modo no bloqueante.
 
-## API Backend
-
-El proyecto se conecta a: `https://dummy-api-topaz.vercel.app`
-
-Endpoints disponibles:
-- `GET /instruments` - Lista de instrumentos
-- `GET /portfolio` - Portafolio del usuario
-- `GET /search?query={ticker}` - Búsqueda de activos
-- `POST /orders` - Crear orden de compra/venta
-
-# Changelog
-
-## [v1.3.0] - 2025-12-15
-### Added
-- implement copy translates to english and spanish
-### Fixed
-- - 
-## [v1.2.2] - 2025-12-15
-### Added
-- implement centralized error handler
-### Fixed
-- - fixes some e2e tests
-- - 
-## [v1.2.1] - 2025-12-15
-### Added
-- install new libs
-- maestro e2e new tests
-- new component tests (orders)
-### Fixed
-- - fixes on previous tests
-- - 
-## [v1.2.0] - 2025-12-15
-### Added
-- Add initial quality tools
-### Fixed
-- - husky to trigger tests on commit&push
-- - maestro e2e instrument tests
-- - unit common component tests
-- - 
-## [v1.1.0] - 2025-12-14
-### Added
-- UI/UX full refactoring and improves
-### Fixed
-- -
-## [v1.0.0] - 2025-12-12
-### Added
-- Initial app functionality
-### Fixed
-- -
+## Notas
+- Interceptor Axios centraliza manejo de errores (`src/services/api/client.ts` + `src/errors`).
+- Búsquedas se debouncean 300 ms (`DEBOUNCE_MS`).
+- Formateo monetario con Dinero.js/moment (`src/i18n/format.ts`); siempre en ARS.
+- Order Modal disponible desde instruments y search; respeta validaciones de `order.schema.ts`.
