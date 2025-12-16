@@ -109,4 +109,8 @@ export const copy = {
     pricePositive: () => t("validation.pricePositive"),
     priceRequiredForLimit: () => t("validation.priceRequiredForLimit"),
   },
+  news: {
+    emptyMessage: () => t("news.emptyMessage"),
+    screenTitle: () => t("news.screenTitle"),
+  },
 } as const;
