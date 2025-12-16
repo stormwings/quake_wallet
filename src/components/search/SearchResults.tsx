@@ -5,6 +5,7 @@ import { Instrument } from "../../types";
 import { Loading } from "../common";
 import { InstrumentCard } from "../instruments";
 import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface SearchResultsProps {
   results: Instrument[];
@@ -19,6 +20,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onResultPress,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
+
   if (loading) {
     return <Loading />;
   }

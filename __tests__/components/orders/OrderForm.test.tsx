@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '../../test-utils';
 import { OrderForm } from '@/src/components/orders/OrderForm';
 import { Instrument } from '@/src/types';
 

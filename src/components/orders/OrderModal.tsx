@@ -19,6 +19,7 @@ import { getUserMessage } from "../../errors";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
 import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderModalProps {
   visible: boolean;
@@ -31,6 +32,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   onClose,
   instrument,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const { loading, error, response } = useAppSelector((state) => state.orders);

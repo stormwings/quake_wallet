@@ -7,8 +7,11 @@ import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
 import { copy } from "../i18n/copy";
 import { getUserMessage } from "../errors";
+import { useLocale } from "../i18n";
 
 export default function PortfolioScreen() {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const dispatch = useAppDispatch();
   const {
     data: positions,

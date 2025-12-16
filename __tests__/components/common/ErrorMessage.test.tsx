@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '../../test-utils';
 import { ErrorMessage } from '@/src/components/common/ErrorMessage';
 import { copy } from '@/src/i18n/copy';
 

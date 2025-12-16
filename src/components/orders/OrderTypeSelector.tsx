@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { OrderSide, OrderType } from "../../types";
 import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderTypeSelectorProps {
   side: OrderSide;
@@ -16,6 +17,9 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   type,
   onTypeChange,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
+
   return (
     <View style={styles.container}>
       <View style={styles.section}>

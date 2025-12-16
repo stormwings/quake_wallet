@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InstrumentsScreen, PortfolioScreen, SearchScreen } from "../screens";
 import { copy } from "../i18n/copy";
+import { useLocale } from "../i18n";
 
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +32,7 @@ function HeaderTitle() {
 
 export function TabNavigator() {
   const insets = useSafeAreaInsets();
+  const { locale, toggleLocale } = useLocale();
 
   return (
     <Tab.Navigator
@@ -41,6 +43,18 @@ export function TabNavigator() {
         headerTitle: () => <HeaderTitle />,
         headerRight: () => (
           <View style={styles.headerRight}>
+            <TouchableOpacity
+              testID="language-toggle-button"
+              onPress={toggleLocale}
+              activeOpacity={0.7}
+              style={styles.iconBtn}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text style={styles.languageText}>
+                {locale.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => {}}
               activeOpacity={0.7}
@@ -151,6 +165,9 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     paddingRight: 15,
   },
   iconWrap: {
@@ -178,5 +195,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
+  },
+  languageText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#6D28D9",
+    letterSpacing: 0.5,
   },
 });

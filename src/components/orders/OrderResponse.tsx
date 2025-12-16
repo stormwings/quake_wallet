@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { OrderStatus } from "../../types";
 import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderResponseProps {
   orderId: string;
@@ -13,6 +14,8 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
   orderId,
   status,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const cfg = getStatusConfig(status);
 
   return (

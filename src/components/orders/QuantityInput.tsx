@@ -11,6 +11,7 @@ import {
 import { calculateQuantityFromAmount } from "../../utils/calculations";
 import { formatCurrency } from "../../utils/formatters";
 import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface QuantityInputProps {
   quantity: number;
@@ -23,6 +24,8 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
   onQuantityChange,
   price,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const [inputMode, setInputMode] = useState<"quantity" | "amount">("quantity");
   const [amountText, setAmountText] = useState("");
   const [quantityText, setQuantityText] = useState(

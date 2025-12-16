@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { LocaleProvider } from '@/src/i18n';
 import { OrderModal } from '@/src/components/orders/OrderModal';
 import { Instrument, OrderResponse } from '@/src/types';
 import ordersReducer from '@/src/store/slices/ordersSlice';
@@ -45,14 +46,16 @@ const createMockStore = (initialState = {}) => {
 
 const renderWithProvider = (component: React.ReactElement, store: any) => {
   return render(
-    <SafeAreaProvider
-      initialMetrics={{
-        frame: { x: 0, y: 0, width: 0, height: 0 },
-        insets: { top: 0, left: 0, right: 0, bottom: 0 },
-      }}
-    >
-      <Provider store={store}>{component}</Provider>
-    </SafeAreaProvider>
+    <LocaleProvider>
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { x: 0, y: 0, width: 0, height: 0 },
+          insets: { top: 0, left: 0, right: 0, bottom: 0 },
+        }}
+      >
+        <Provider store={store}>{component}</Provider>
+      </SafeAreaProvider>
+    </LocaleProvider>
   );
 };
 
