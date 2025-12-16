@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ErrorMessage, Loading, PositionList } from "../components";
+import { getUserMessage } from "../errors";
+import { useLocale } from "../i18n";
+import { copy } from "../i18n/copy";
 import { useAppDispatch, useAppSelector } from "../store";
 import { fetchPortfolio } from "../store/slices";
 import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
-import { copy } from "../i18n/copy";
-import { getUserMessage } from "../errors";
-import { useLocale } from "../i18n";
 
 export default function PortfolioScreen() {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
+
   const dispatch = useAppDispatch();
   const {
     data: positions,
@@ -47,7 +47,7 @@ export default function PortfolioScreen() {
   return (
     <View testID="portfolio-screen" style={styles.container}>
       {positions && positions.length > 0 && (
-        <View testID="portfolio-summary" style={styles.summaryCard}>
+        <View key="portfolio-summary" testID="portfolio-summary" style={styles.summaryCard}>
           <Text style={styles.headerLabel}>{copy.portfolio.totalLabel()}</Text>
           <Text testID="portfolio-total-value" style={styles.headerValue}>
             {formatCurrency(totalValue)}
@@ -57,18 +57,19 @@ export default function PortfolioScreen() {
 
       {positions && positions.length > 0 ? (
         <PositionList
+          key="portfolio-list"
           positions={positions}
           refreshing={loading}
           onRefresh={handleRefresh}
         />
       ) : (
-        <View testID="portfolio-empty-state" style={styles.emptyContainer}>
+        <View key="portfolio-empty" testID="portfolio-empty-state" style={styles.emptyContainer}>
           <Text style={styles.emptyText}>{copy.portfolio.emptyMessage()}</Text>
         </View>
       )}
 
       {error && positions && (
-        <View testID="portfolio-error-banner" style={styles.errorBanner}>
+        <View key="portfolio-error" testID="portfolio-error-banner" style={styles.errorBanner}>
           <Text style={styles.errorBannerText}>{getUserMessage(error)}</Text>
         </View>
       )}

@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
-import { copy } from "../../i18n/copy";
 import { useLocale } from "../../i18n";
+import { copy } from "../../i18n/copy";
 
 interface SearchInputProps {
   value: string;
@@ -15,7 +15,6 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onChangeText,
   placeholder = copy.search.placeholder(),
 }) => {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
 
   const handleClear = () => {

@@ -1,5 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useLocale } from "../../i18n";
+import { copy } from "../../i18n/copy";
 import { Position } from "../../types";
 import {
   calculateMarketValue,
@@ -7,15 +9,12 @@ import {
   calculateProfitPercentage,
 } from "../../utils/calculations";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
-import { copy } from "../../i18n/copy";
-import { useLocale } from "../../i18n";
 
 interface PositionCardProps {
   position: Position;
 }
 
 export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
 
   const { ticker, quantity, last_price, avg_cost_price } = position;

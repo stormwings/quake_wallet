@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { OrderModal, SearchInput, SearchResults } from "../components";
+import { reportError, toAppError } from "../errors";
 import { useDebounce } from "../hooks";
+import { useLocale } from "../i18n";
+import { copy } from "../i18n/copy";
 import { instrumentsApi } from "../services";
 import { Instrument } from "../types";
-import { copy } from "../i18n/copy";
-import { reportError, toAppError } from "../errors";
-import { useLocale } from "../i18n";
 
 export default function SearchScreen() {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
+
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Instrument[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,12 +61,14 @@ export default function SearchScreen() {
   return (
     <View testID="search-screen" style={styles.container}>
       <SearchInput
+        key="search-input"
         value={query}
         onChangeText={setQuery}
         placeholder={copy.search.placeholder()}
       />
 
       <SearchResults
+        key="search-results"
         results={results}
         loading={loading}
         query={debouncedQuery}
@@ -74,6 +76,7 @@ export default function SearchScreen() {
       />
 
       <OrderModal
+        key="search-order-modal"
         visible={modalVisible}
         onClose={handleCloseModal}
         instrument={selectedInstrument}

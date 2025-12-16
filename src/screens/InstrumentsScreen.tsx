@@ -45,6 +45,7 @@ export default function InstrumentsScreen() {
   return (
     <View testID="instruments-screen" style={styles.container}>
       <FlatList
+        key="instruments-list"
         testID="instruments-list"
         data={instruments}
         keyExtractor={(item) => item.id.toString()}
@@ -65,6 +66,7 @@ export default function InstrumentsScreen() {
       />
 
       <OrderModal
+        key="instruments-order-modal"
         visible={modalVisible}
         onClose={handleCloseModal}
         instrument={selectedInstrument}

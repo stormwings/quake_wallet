@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useLocale } from "../../i18n";
+import { copy } from "../../i18n/copy";
 import { Instrument } from "../../types";
 import { Loading } from "../common";
 import { InstrumentCard } from "../instruments";
-import { copy } from "../../i18n/copy";
-import { useLocale } from "../../i18n";
 
 interface SearchResultsProps {
   results: Instrument[];
@@ -20,7 +20,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onResultPress,
 }) => {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
 
   if (loading) {
@@ -62,10 +61,8 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       testID="search-results-list"
       data={results}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item, index }) => (
-        <View testID={`search-result-item-${index}`}>
-          <InstrumentCard instrument={item} onPress={() => onResultPress(item)} />
-        </View>
+      renderItem={({ item }) => (
+        <InstrumentCard instrument={item} onPress={() => onResultPress(item)} />
       )}
       contentContainerStyle={styles.listContainer}
       showsVerticalScrollIndicator={false}

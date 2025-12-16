@@ -18,7 +18,7 @@ export const PositionList: React.FC<PositionListProps> = ({
     <FlatList
       testID="position-list"
       data={positions}
-      keyExtractor={(item) => item.instrument_id.toString()}
+      keyExtractor={(item, index) => `${item.instrument_id}-${item.avg_cost_price}-${index}`}
       renderItem={({ item }) => <PositionCard position={item} />}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
