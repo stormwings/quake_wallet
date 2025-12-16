@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "scheme": "quakewallet",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "platforms": [
       "ios",
       "android"
@@ -18,6 +19,11 @@
       "package": "com.quakewallet.app",
       "adaptiveIcon": {
         "backgroundColor": "#007AFF"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7746578b-03d5-44f3-81f7-05dda5c0c594"
       }
     }
   }
