@@ -4,9 +4,13 @@ import { OrderModal, SearchInput, SearchResults } from "../components";
 import { useDebounce } from "../hooks";
 import { instrumentsApi } from "../services";
 import { Instrument } from "../types";
+import { copy } from "../i18n/copy";
 import { reportError, toAppError } from "../errors";
+import { useLocale } from "../i18n";
 
 export default function SearchScreen() {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Instrument[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,7 +63,7 @@ export default function SearchScreen() {
       <SearchInput
         value={query}
         onChangeText={setQuery}
-        placeholder="Buscar por ticker..."
+        placeholder={copy.search.placeholder()}
       />
 
       <SearchResults

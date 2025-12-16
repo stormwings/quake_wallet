@@ -7,12 +7,17 @@ import {
   calculateProfitPercentage,
 } from "../../utils/calculations";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
+import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface PositionCardProps {
   position: Position;
 }
 
 export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
+
   const { ticker, quantity, last_price, avg_cost_price } = position;
 
   const marketValue = calculateMarketValue(quantity, last_price);
@@ -36,7 +41,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
             {ticker}
           </Text>
           <Text testID="position-card-quantity" style={styles.quantity}>
-            {quantity} acciones
+            {copy.portfolio.quantity(quantity)}
           </Text>
         </View>
 
@@ -62,7 +67,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
       <View style={styles.divider} />
 
       <View style={styles.kvRow}>
-        <Text style={styles.kLabel}>Ganancia</Text>
+        <Text style={styles.kLabel}>{copy.portfolio.profitLabel()}</Text>
         <Text
           testID="position-card-profit"
           style={[styles.kValueStrong, { color: profitColor }]}
@@ -72,14 +77,14 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
       </View>
 
       <View style={styles.kvRow}>
-        <Text style={styles.kLabel}>Precio prom. compra</Text>
+        <Text style={styles.kLabel}>{copy.portfolio.avgCostLabel()}</Text>
         <Text testID="position-card-avg-cost" style={styles.kValue}>
           {formatCurrency(avg_cost_price)}
         </Text>
       </View>
 
       <View style={styles.kvRow}>
-        <Text style={styles.kLabel}>Precio actual</Text>
+        <Text style={styles.kLabel}>{copy.portfolio.lastPriceLabel()}</Text>
         <Text testID="position-card-last-price" style={styles.kValue}>
           {formatCurrency(last_price)}
         </Text>

@@ -11,10 +11,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { InstrumentsScreen, PortfolioScreen, SearchScreen } from "../screens";
+import { copy } from "../i18n/copy";
+import { useLocale } from "../i18n";
 
 const Tab = createBottomTabNavigator();
-
-const USERNAME = "$usuario";
 
 function HeaderTitle() {
   return (
@@ -24,7 +24,7 @@ function HeaderTitle() {
       </View>
 
       <Text style={styles.headerHello} numberOfLines={1}>
-        Hola <Text style={styles.headerUser}>{USERNAME}</Text> 👋
+        {copy.navigation.greeting(copy.navigation.userPlaceholder())}
       </Text>
     </View>
   );
@@ -32,6 +32,7 @@ function HeaderTitle() {
 
 export function TabNavigator() {
   const insets = useSafeAreaInsets();
+  const { locale, toggleLocale } = useLocale();
 
   return (
     <Tab.Navigator
@@ -42,6 +43,18 @@ export function TabNavigator() {
         headerTitle: () => <HeaderTitle />,
         headerRight: () => (
           <View style={styles.headerRight}>
+            <TouchableOpacity
+              testID="language-toggle-button"
+              onPress={toggleLocale}
+              activeOpacity={0.7}
+              style={styles.iconBtn}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text style={styles.languageText}>
+                {locale.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => {}}
               activeOpacity={0.7}
@@ -83,8 +96,8 @@ export function TabNavigator() {
         name="Instruments"
         component={InstrumentsScreen}
         options={{
-          title: "Instrumentos",
-          tabBarLabel: "Instrumentos",
+          title: copy.navigation.instrumentsTitle(),
+          tabBarLabel: copy.navigation.instrumentsTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "trending-up" : "trending-up-outline"}
@@ -98,8 +111,8 @@ export function TabNavigator() {
         name="Portfolio"
         component={PortfolioScreen}
         options={{
-          title: "Portfolio",
-          tabBarLabel: "Portfolio",
+          title: copy.navigation.portfolioTitle(),
+          tabBarLabel: copy.navigation.portfolioTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -113,8 +126,8 @@ export function TabNavigator() {
         name="Search"
         component={SearchScreen}
         options={{
-          title: "Buscar",
-          tabBarLabel: "Buscar",
+          title: copy.navigation.searchTitle(),
+          tabBarLabel: copy.navigation.searchTitle(),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? "search" : "search-outline"}
@@ -152,6 +165,9 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     paddingRight: 15,
   },
   iconWrap: {
@@ -179,5 +195,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
+  },
+  languageText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#6D28D9",
+    letterSpacing: 0.5,
   },
 });

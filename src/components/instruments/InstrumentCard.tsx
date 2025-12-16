@@ -3,6 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Instrument } from "../../types";
 import { calculateReturn } from "../../utils/calculations";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
+import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface InstrumentCardProps {
   instrument: Instrument;
@@ -10,6 +12,8 @@ interface InstrumentCardProps {
 }
 
 export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const returnValue = calculateReturn(
     instrument.last_price,
     instrument.close_price
@@ -20,7 +24,9 @@ export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
     <TouchableOpacity
       testID={`instrument-card-${instrument.ticker}`}
       accessible={true}
-      accessibilityLabel={`Instrument ${instrument.ticker}`}
+      accessibilityLabel={copy.instruments.accessibilityLabel(
+        instrument.ticker
+      )}
       style={styles.row}
       onPress={onPress}
       activeOpacity={0.85}

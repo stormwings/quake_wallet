@@ -4,13 +4,16 @@ import { Provider } from "react-redux";
 
 import { RootNavigator } from "./src/navigation";
 import { store } from "./src/store";
+import { LocaleProvider } from "./src/i18n";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <Provider store={store}>
-        <RootNavigator />
-      </Provider>
+      <LocaleProvider initialLocale="es">
+        <Provider store={store}>
+          <RootNavigator />
+        </Provider>
+      </LocaleProvider>
     </SafeAreaProvider>
   );
 }

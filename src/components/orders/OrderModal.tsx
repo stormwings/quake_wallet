@@ -18,6 +18,8 @@ import { Instrument, OrderRequest } from "../../types";
 import { getUserMessage } from "../../errors";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
+import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderModalProps {
   visible: boolean;
@@ -30,6 +32,8 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   onClose,
   instrument,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const { loading, error, response } = useAppSelector((state) => state.orders);
@@ -80,7 +84,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 
           <View style={styles.header}>
             <Text testID="order-modal-title" style={styles.headerTitle}>
-              {response ? "Resultado de la orden" : "Nueva orden"}
+              {response
+                ? copy.orders.modal.titleResult()
+                : copy.orders.modal.titleNew()}
             </Text>
 
             <TouchableOpacity
@@ -110,7 +116,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
                   onPress={handleNewOrder}
                   activeOpacity={0.85}
                 >
-                  <Text style={styles.primaryBtnText}>Nueva orden</Text>
+                  <Text style={styles.primaryBtnText}>
+                    {copy.orders.modal.newOrderCta()}
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (

@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { copy } from '../../i18n/copy';
 import { getUserMessage } from '../../errors';
+import { useLocale } from '../../i18n';
 
 interface ErrorMessageProps {
   message?: string;
@@ -9,6 +11,9 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ message, error, onRetry }: ErrorMessageProps) {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
+
   const display = message ?? (error ? getUserMessage(error) : 'Ocurrió un error.');
 
   return (
@@ -20,7 +25,7 @@ export function ErrorMessage({ message, error, onRetry }: ErrorMessageProps) {
           style={styles.retryButton}
           onPress={onRetry}
         >
-          <Text style={styles.retryText}>Retry</Text>
+          <Text style={styles.retryText}>{copy.common.retry()}</Text>
         </TouchableOpacity>
       )}
     </View>

@@ -17,6 +17,8 @@ import { formatCurrency } from "../../utils/formatters";
 import { getFieldErrorMessage } from "../../errors";
 import { OrderTypeSelector } from "./OrderTypeSelector";
 import { QuantityInput } from "./QuantityInput";
+import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderFormProps {
   instrument: Instrument;
@@ -31,6 +33,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   onCancel,
   loading = false,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
+
   const {
     control,
     handleSubmit,
@@ -79,7 +84,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
       ? watchedQuantity * parseFloat(priceText)
       : 0;
 
-  const submitLabel = watchedSide === "BUY" ? "Comprar" : "Vender";
+  const submitLabel = copy.orders.form.submitLabel(watchedSide);
 
   return (
     <View testID="order-form" style={styles.container}>
@@ -94,7 +99,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
         </View>
 
         <View style={styles.priceBox}>
-          <Text style={styles.priceLabel}>Precio actual</Text>
+          <Text style={styles.priceLabel}>
+            {copy.orders.form.priceCurrentLabel()}
+          </Text>
           <Text testID="order-form-current-price" style={styles.priceValue}>
             {formatCurrency(instrument.last_price)}
           </Text>
@@ -145,7 +152,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
 
       {watchedType === "LIMIT" && (
         <View style={styles.field}>
-          <Text style={styles.fieldLabel}>Precio límite</Text>
+          <Text style={styles.fieldLabel}>
+            {copy.orders.form.priceLimitLabel()}
+          </Text>
 
           <View style={styles.inputWrap}>
             <Text style={styles.prefix}>$</Text>
@@ -154,7 +163,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               style={styles.input}
               value={priceText}
               onChangeText={handlePriceChange}
-              placeholder="0.00"
+              placeholder={copy.orders.form.pricePlaceholder()}
               placeholderTextColor={TOKENS.subtext}
               keyboardType="decimal-pad"
               returnKeyType="done"
@@ -175,7 +184,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({
               size={16}
               color={TOKENS.subtext}
             />
-            <Text style={styles.totalLabel}>Total estimado</Text>
+            <Text style={styles.totalLabel}>
+              {copy.orders.form.totalEstimatedLabel()}
+            </Text>
           </View>
           <Text style={styles.totalValue}>
             {formatCurrency(totalEstimated)}
@@ -191,7 +202,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
           disabled={loading}
           activeOpacity={0.85}
         >
-          <Text style={styles.btnSecondaryText}>Cancelar</Text>
+          <Text style={styles.btnSecondaryText}>{copy.common.cancel()}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

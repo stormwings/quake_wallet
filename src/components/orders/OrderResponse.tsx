@@ -2,6 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { OrderStatus } from "../../types";
+import { copy } from "../../i18n/copy";
+import { useLocale } from "../../i18n";
 
 interface OrderResponseProps {
   orderId: string;
@@ -12,6 +14,8 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
   orderId,
   status,
 }) => {
+  // Subscribe to locale changes to trigger re-render
+  useLocale();
   const cfg = getStatusConfig(status);
 
   return (
@@ -32,7 +36,7 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
       <Text style={styles.message}>{cfg.message}</Text>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoLabel}>ID de la orden</Text>
+        <Text style={styles.infoLabel}>{copy.orders.response.idLabel()}</Text>
         <Text testID="order-response-id" style={styles.infoValue}>
           {orderId}
         </Text>
@@ -40,13 +44,13 @@ export const OrderResponse: React.FC<OrderResponseProps> = ({
 
       {status === "PENDING" && (
         <Text style={styles.hint}>
-          La orden se ejecutará cuando se alcance el precio límite especificado.
+          {copy.orders.response.statusHint(status)}
         </Text>
       )}
 
       {status === "REJECTED" && (
         <Text style={styles.hint}>
-          Verifica que tengas fondos suficientes e intenta nuevamente.
+          {copy.orders.response.statusHint(status)}
         </Text>
       )}
     </View>
@@ -60,8 +64,8 @@ function getStatusConfig(orderStatus: OrderStatus) {
         color: "#10B981",
         bg: "#ECFDF5",
         border: "#D1FAE5",
-        label: "EJECUTADA",
-        message: "Tu orden fue ejecutada exitosamente",
+        label: copy.orders.response.statusLabel(orderStatus),
+        message: copy.orders.response.statusMessage(orderStatus),
         icon: "checkmark",
       };
     case "PENDING":
@@ -69,8 +73,8 @@ function getStatusConfig(orderStatus: OrderStatus) {
         color: "#F59E0B",
         bg: "#FFFBEB",
         border: "#FEF3C7",
-        label: "PENDIENTE",
-        message: "Tu orden está esperando ejecución",
+        label: copy.orders.response.statusLabel(orderStatus),
+        message: copy.orders.response.statusMessage(orderStatus),
         icon: "time-outline",
       };
     case "REJECTED":
@@ -79,8 +83,8 @@ function getStatusConfig(orderStatus: OrderStatus) {
         color: "#EF4444",
         bg: "#FEF2F2",
         border: "#FEE2E2",
-        label: "RECHAZADA",
-        message: "Tu orden fue rechazada por el mercado",
+        label: copy.orders.response.statusLabel(orderStatus),
+        message: copy.orders.response.statusMessage(orderStatus),
         icon: "close",
       };
   }
