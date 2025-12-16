@@ -1,4 +1,4 @@
-# Quake Wallet [v1.3.0]
+# Quake Wallet [v1.4.0]
 
 <p align="center">
   Aplicación móvil en <b>React Native (Expo)</b> para visualizar instrumentos, gestionar portafolios y enviar órdenes <b>BUY/SELL</b> (Market/Limit).
@@ -171,6 +171,12 @@ adb install path/to/app.apk
 ```
 
 ### Changelog
+
+#### [v1.4.0] - 2025-12-16
+##### Added
+- implement news view
+#### Fixed
+- fixes some app warnings and types
 
 #### [v1.3.0] - 2025-12-15
 ##### Added
