@@ -3,3 +3,4 @@ export * from './instruments';
 export * from './portfolio';
 export * from './search';
 export * from './orders';
+export * from './news';

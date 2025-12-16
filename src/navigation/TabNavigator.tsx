@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Platform,
@@ -33,6 +34,7 @@ function HeaderTitle() {
 export function TabNavigator() {
   const insets = useSafeAreaInsets();
   const { locale, toggleLocale } = useLocale();
+  const navigation = useNavigation<any>();
 
   return (
     <Tab.Navigator
@@ -56,7 +58,8 @@ export function TabNavigator() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => {}}
+              testID="notifications-button"
+              onPress={() => navigation.navigate('News')}
               activeOpacity={0.7}
               style={styles.iconBtn}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

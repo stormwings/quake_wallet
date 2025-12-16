@@ -86,4 +86,8 @@ export const en = {
     pricePositive: "Price must be positive",
     priceRequiredForLimit: "Price is required for LIMIT orders",
   },
+  news: {
+    emptyMessage: "No news available",
+    screenTitle: "News",
+  },
 } as const;

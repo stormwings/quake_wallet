@@ -11,14 +11,14 @@ import {
   View,
 } from "react-native";
 
+import { getFieldErrorMessage } from "../../errors";
+import { useLocale } from "../../i18n";
+import { copy } from "../../i18n/copy";
 import { OrderFormData, orderSchema } from "../../schemas";
 import { Instrument, OrderRequest } from "../../types";
 import { formatCurrency } from "../../utils/formatters";
-import { getFieldErrorMessage } from "../../errors";
 import { OrderTypeSelector } from "./OrderTypeSelector";
 import { QuantityInput } from "./QuantityInput";
-import { copy } from "../../i18n/copy";
-import { useLocale } from "../../i18n";
 
 interface OrderFormProps {
   instrument: Instrument;
@@ -33,7 +33,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   onCancel,
   loading = false,
 }) => {
-  // Subscribe to locale changes to trigger re-render
   useLocale();
 
   const {

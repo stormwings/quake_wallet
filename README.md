@@ -1,4 +1,4 @@
-# Quake Wallet [v1.3.0]
+# Quake Wallet [v1.4.0]
 
 <p align="center">
   Aplicación móvil en <b>React Native (Expo)</b> para visualizar instrumentos, gestionar portafolios y enviar órdenes <b>BUY/SELL</b> (Market/Limit).
@@ -118,7 +118,65 @@ Endpoints disponibles:
 - Formateo monetario con Dinero.js/moment (`src/i18n/format.ts`); siempre en ARS.
 - Order Modal disponible desde instruments y search; respeta validaciones de `order.schema.ts`.
 
+Aquí tenés una mini guía lista para pegar en tu **README.md** (Android build con Expo/EAS).
+
+---
+
+## Build Android (Expo + EAS)
+
+### Requisitos
+
+* Cuenta de Expo (expo.dev)
+* `adb` instalado **solo si** querés instalar el APK desde consola (Android Studio/SDK)
+
+### 1) Instalar EAS CLI y loguearse
+
+```bash
+npm install -g eas-cli
+eas login
+```
+
+### 2) Configurar EAS en el proyecto
+
+Desde la raíz del repo:
+
+```bash
+eas build:configure
+```
+
+Esto crea/actualiza `eas.json` con los perfiles de build.
+
+### 3) Compilar Android
+
+**APK (ideal para pruebas / instalar directo)**
+
+```bash
+eas build -p android --profile preview
+```
+
+**AAB (ideal para Google Play)**
+
+```bash
+eas build -p android --profile production
+```
+
+Al finalizar, EAS devuelve un link para descargar el artefacto generado (APK/AAB).
+
+### 4) Instalar el APK (opcional)
+
+Con un emulador o dispositivo conectado:
+
+```bash
+adb install path/to/app.apk
+```
+
 ### Changelog
+
+#### [v1.4.0] - 2025-12-16
+##### Added
+- implement news view
+#### Fixed
+- fixes some app warnings and types
 
 #### [v1.3.0] - 2025-12-15
 ##### Added

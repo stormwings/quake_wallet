@@ -1,25 +1,25 @@
 import React from "react";
 import { FlatList, RefreshControl, StyleSheet } from "react-native";
-import { Position } from "../../types";
-import { PositionCard } from "./PositionCard";
+import { NewsArticle } from "../../types";
+import { NewsCard } from "./NewsCard";
 
-interface PositionListProps {
-  positions: Position[];
+interface NewsListProps {
+  articles: NewsArticle[];
   refreshing?: boolean;
   onRefresh?: () => void;
 }
 
-export const PositionList: React.FC<PositionListProps> = ({
-  positions,
+export const NewsList: React.FC<NewsListProps> = ({
+  articles,
   refreshing = false,
   onRefresh,
 }) => {
   return (
     <FlatList
-      testID="position-list"
-      data={positions}
-      keyExtractor={(item, index) => `${item.instrument_id}-${item.avg_cost_price}-${index}`}
-      renderItem={({ item }) => <PositionCard position={item} />}
+      testID="news-list"
+      data={articles}
+      keyExtractor={(item) => item.uuid}
+      renderItem={({ item }) => <NewsCard article={item} />}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       refreshControl={
@@ -34,7 +34,7 @@ export const PositionList: React.FC<PositionListProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 2,
+    paddingTop: 12,
     paddingBottom: 16,
   },
 });
