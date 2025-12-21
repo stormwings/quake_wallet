@@ -1,52 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { OrderModal, SearchInput, SearchResults } from "../components";
-import { reportError, toAppError } from "../errors";
 import { useDebounce } from "../hooks";
 import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
-import { instrumentsApi } from "../services";
+import { useInstrumentSearch } from "../services/queries/useInstrumentSearch";
 import { Instrument } from "../types";
 
 export default function SearchScreen() {
   useLocale();
 
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Instrument[]>([]);
-  const [loading, setLoading] = useState(false);
   const [selectedInstrument, setSelectedInstrument] =
     useState<Instrument | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
 
-  useEffect(() => {
-    const searchInstruments = async () => {
-      if (!debouncedQuery.trim()) {
-        setResults([]);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const searchResults = await instrumentsApi.search(debouncedQuery);
-        setResults(searchResults);
-      } catch (err) {
-        const appErr = toAppError(err, {
-          layer: 'ui',
-          screen: 'SearchScreen',
-          action: 'search',
-        });
-        reportError(appErr);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    searchInstruments();
-  }, [debouncedQuery]);
+  // React Query handles loading, error, and data fetching automatically
+  const { data: results = [], isLoading: loading } = useInstrumentSearch(debouncedQuery);
 
   const handleResultPress = (instrument: Instrument) => {
     setSelectedInstrument(instrument);

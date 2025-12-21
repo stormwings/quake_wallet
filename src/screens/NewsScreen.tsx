@@ -1,31 +1,26 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ErrorMessage, Loading, NewsList } from "../components";
 import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
-import { useAppDispatch, useAppSelector } from "../store";
-import { fetchNews } from "../store/slices";
+import { useNewsQuery } from "../services/queries/useNewsQuery";
 
 export default function NewsScreen() {
   useLocale();
 
-  const dispatch = useAppDispatch();
   const {
     data: articles,
-    loading,
+    isLoading: loading,
     error,
-  } = useAppSelector((state) => state.news);
-
-  useEffect(() => {
-    dispatch(fetchNews());
-  }, [dispatch]);
+    refetch,
+  } = useNewsQuery();
 
   const handleRefresh = () => {
-    dispatch(fetchNews());
+    refetch();
   };
 
   const handleRetry = () => {
-    dispatch(fetchNews());
+    refetch();
   };
 
   if (loading && !articles) {

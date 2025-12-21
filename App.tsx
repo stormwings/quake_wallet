@@ -1,19 +1,19 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider } from "react-redux";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 import { LocaleProvider } from "./src/i18n";
 import { RootNavigator } from "./src/navigation";
-import { store } from "./src/store";
+import { queryClient } from "./src/services/queryClient";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <LocaleProvider initialLocale="es">
-        <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <LocaleProvider initialLocale="es">
           <RootNavigator />
-        </Provider>
-      </LocaleProvider>
+        </LocaleProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

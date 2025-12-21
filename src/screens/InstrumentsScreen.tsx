@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { ErrorMessage, InstrumentCard, Loading, OrderModal } from '../components';
-import { useAppDispatch, useAppSelector } from '../store';
-import { fetchInstruments } from '../store/slices';
+import { useInstrumentsQuery } from '../services/queries/useInstrumentsQuery';
 import { Instrument } from '../types';
 
 export default function InstrumentsScreen() {
-  const dispatch = useAppDispatch();
-  const { data: instruments, loading, error } = useAppSelector((state) => state.instruments);
+  const {
+    data: instruments,
+    isLoading: loading,
+    error,
+    refetch,
+  } = useInstrumentsQuery();
 
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchInstruments());
-  }, [dispatch]);
-
   const handleRefresh = () => {
-    dispatch(fetchInstruments());
+    refetch();
   };
 
   const handleRetry = () => {
-    dispatch(fetchInstruments());
+    refetch();
   };
 
   const handleInstrumentPress = (instrument: Instrument) => {

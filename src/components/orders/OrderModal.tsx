@@ -15,8 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getUserMessage } from "../../errors";
 import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { clearOrdersResponse, createOrder } from "../../store/slices";
+import { useCreateOrderMutation } from "../../services/mutations/useCreateOrderMutation";
 import { Instrument, OrderRequest } from "../../types";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
@@ -34,25 +33,30 @@ export const OrderModal: React.FC<OrderModalProps> = ({
 }) => {
   useLocale();
 
-  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
-  const { loading, error, response } = useAppSelector((state) => state.orders);
+  const {
+    mutate: createOrder,
+    isPending: loading,
+    error,
+    data: response,
+    reset: clearOrdersResponse,
+  } = useCreateOrderMutation();
 
   useEffect(() => {
-    if (visible && instrument) dispatch(clearOrdersResponse());
-  }, [visible, instrument, dispatch]);
+    if (visible && instrument) clearOrdersResponse();
+  }, [visible, instrument, clearOrdersResponse]);
 
   const handleSubmit = (orderData: OrderRequest) => {
-    dispatch(createOrder(orderData));
+    createOrder(orderData);
   };
 
   const handleClose = () => {
-    dispatch(clearOrdersResponse());
+    clearOrdersResponse();
     onClose();
   };
 
   const handleNewOrder = () => {
-    dispatch(clearOrdersResponse());
+    clearOrdersResponse();
   };
 
   if (!instrument) return null;

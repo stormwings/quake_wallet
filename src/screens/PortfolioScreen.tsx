@@ -1,34 +1,29 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ErrorMessage, Loading, PositionList } from "../components";
 import { getUserMessage } from "../errors";
 import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
-import { useAppDispatch, useAppSelector } from "../store";
-import { fetchPortfolio } from "../store/slices";
+import { usePortfolioQuery } from "../services/queries/usePortfolioQuery";
 import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
 
 export default function PortfolioScreen() {
   useLocale();
 
-  const dispatch = useAppDispatch();
   const {
     data: positions,
-    loading,
+    isLoading: loading,
     error,
-  } = useAppSelector((state) => state.portfolio);
-
-  useEffect(() => {
-    dispatch(fetchPortfolio());
-  }, [dispatch]);
+    refetch,
+  } = usePortfolioQuery();
 
   const handleRefresh = () => {
-    dispatch(fetchPortfolio());
+    refetch();
   };
 
   const handleRetry = () => {
-    dispatch(fetchPortfolio());
+    refetch();
   };
 
   const totalValue =
