@@ -1,23 +1,24 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LocaleProvider } from '@/src/i18n';
 import { OrderModal } from '@/src/components/orders/OrderModal';
 import { Instrument, OrderResponse } from '@/src/types';
-import ordersReducer from '@/src/store/slices/ordersSlice';
+import { ReactQueryWrapper } from '@/__tests__/utils';
 
-jest.mock('@/src/services', () => {
-  const actual = jest.requireActual('@/src/services');
-  return {
-    ...actual,
-    ordersApi: {
-      ...actual.ordersApi,
-      create: jest.fn(() => new Promise(() => {})),
-    },
-  };
-});
+// Mock the useCreateOrderMutation hook
+const mockMutate = jest.fn();
+const mockReset = jest.fn();
+
+jest.mock('@/src/services/mutations/useCreateOrderMutation', () => ({
+  useCreateOrderMutation: () => ({
+    mutate: mockMutate,
+    isPending: false,
+    error: null,
+    data: null,
+    reset: mockReset,
+  }),
+}));
 
 const mockInstrument: Instrument = {
   id: 1,
@@ -28,23 +29,7 @@ const mockInstrument: Instrument = {
   close_price: 145.0,
 };
 
-const createMockStore = (initialState = {}) => {
-  return configureStore({
-    reducer: {
-      orders: ordersReducer,
-    },
-    preloadedState: {
-      orders: {
-        loading: false,
-        error: null,
-        response: null,
-        ...initialState,
-      },
-    },
-  });
-};
-
-const renderWithProvider = (component: React.ReactElement, store: any) => {
+const renderWithProvider = (component: React.ReactElement) => {
   return render(
     <LocaleProvider>
       <SafeAreaProvider
@@ -53,7 +38,7 @@ const renderWithProvider = (component: React.ReactElement, store: any) => {
           insets: { top: 0, left: 0, right: 0, bottom: 0 },
         }}
       >
-        <Provider store={store}>{component}</Provider>
+        <ReactQueryWrapper>{component}</ReactQueryWrapper>
       </SafeAreaProvider>
     </LocaleProvider>
   );
@@ -66,32 +51,30 @@ describe('OrderModal', () => {
     mockOnClose.mockClear();
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('Basic Rendering', () => {
     it('should render modal when visible is true', () => {
-      const store = createMockStore();
       const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       expect(getByTestId('order-modal')).toBeTruthy();
     });
 
     it('should return null when instrument is null', () => {
-      const store = createMockStore();
       const { queryByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={null} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={null} />
       );
 
       expect(queryByTestId('order-modal')).toBeNull();
     });
 
     it('should render modal with title and close button', () => {
-      const store = createMockStore();
       const { getByTestId, getByText } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       expect(getByText('Nueva orden')).toBeTruthy();
@@ -101,20 +84,16 @@ describe('OrderModal', () => {
 
   describe('Form State', () => {
     it('should display OrderForm when no response exists', () => {
-      const store = createMockStore();
       const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       expect(getByTestId('order-form')).toBeTruthy();
     });
 
     it('should display instrument information in form', () => {
-      const store = createMockStore();
       const { getByText } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       expect(getByText('AAPL')).toBeTruthy();
@@ -126,10 +105,8 @@ describe('OrderModal', () => {
 
   describe('User Interactions', () => {
     it('should call onClose when close button is pressed', () => {
-      const store = createMockStore();
       const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       const closeButton = getByTestId('order-modal-close');
@@ -139,10 +116,8 @@ describe('OrderModal', () => {
     });
 
     it('should call onClose when modal requests close', () => {
-      const store = createMockStore();
       const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       const modal = getByTestId('order-modal');
@@ -154,24 +129,36 @@ describe('OrderModal', () => {
   });
 
   describe('Loading State', () => {
-    it('should pass loading state to OrderForm', () => {
-      const store = createMockStore({ loading: true });
-      const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+    it('should call reset when modal becomes visible', () => {
+      const { rerender } = renderWithProvider(
+        <OrderModal visible={false} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
-      const submitButton = getByTestId('order-form-submit');
-      expect(submitButton.props.accessibilityState.disabled).toBe(true);
+      // Remount with visible=true
+      rerender(
+        <LocaleProvider>
+          <SafeAreaProvider
+            initialMetrics={{
+              frame: { x: 0, y: 0, width: 0, height: 0 },
+              insets: { top: 0, left: 0, right: 0, bottom: 0 },
+            }}
+          >
+            <ReactQueryWrapper>
+              <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
+            </ReactQueryWrapper>
+          </SafeAreaProvider>
+        </LocaleProvider>
+      );
+
+      // Should call reset when modal opens
+      expect(mockReset).toHaveBeenCalled();
     });
   });
 
   describe('Order Submission', () => {
-    it('should update store when order is submitted', async () => {
-      const store = createMockStore();
+    it('should call mutate when order is submitted', async () => {
       const { getByTestId } = renderWithProvider(
-        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />,
-        store
+        <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
       );
 
       const quantityInput = getByTestId('order-quantity-input');
@@ -181,8 +168,7 @@ describe('OrderModal', () => {
       fireEvent.press(submitButton);
 
       await waitFor(() => {
-        const state = store.getState();
-        expect(state.orders.loading).toBe(true);
+        expect(mockMutate).toHaveBeenCalled();
       });
     });
   });
