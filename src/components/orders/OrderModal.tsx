@@ -13,9 +13,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { getUserMessage } from "../../errors";
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
 import { useCreateOrderMutation } from "../../services/mutations/useCreateOrderMutation";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { Instrument, OrderRequest } from "../../types";
 import { OrderForm } from "./OrderForm";
 import { OrderResponse } from "./OrderResponse";
@@ -31,7 +31,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   onClose,
   instrument,
 }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const insets = useSafeAreaInsets();
   const {

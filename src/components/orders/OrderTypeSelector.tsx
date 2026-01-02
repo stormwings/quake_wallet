@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { OrderSide, OrderType } from "../../types";
 
 interface OrderTypeSelectorProps {
@@ -17,7 +17,7 @@ export const OrderTypeSelector: React.FC<OrderTypeSelectorProps> = ({
   type,
   onTypeChange,
 }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   return (
     <View style={styles.container}>

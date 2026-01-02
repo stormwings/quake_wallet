@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getUserMessage } from '../../errors';
-import { useLocale } from '../../i18n';
 import { copy } from '../../i18n/copy';
+import { useLocaleStore } from "../../store/useLocaleStore";
 
 interface ErrorMessageProps {
   message?: string;
@@ -11,7 +11,7 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ message, error, onRetry }: ErrorMessageProps) {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const display = message ?? (error ? getUserMessage(error) : 'Ocurrió un error.');
 

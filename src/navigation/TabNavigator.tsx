@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { InstrumentsScreen, PortfolioScreen, SearchScreen } from "../screens";
 import { copy } from "../i18n/copy";
-import { useLocale } from "../i18n";
+import { InstrumentsScreen, PortfolioScreen, SearchScreen } from "../screens";
+import { useLocaleStore } from "../store/useLocaleStore";
+import { useNotificationStore } from "../store/useNotificationStore";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +34,8 @@ function HeaderTitle() {
 
 export function TabNavigator() {
   const insets = useSafeAreaInsets();
-  const { locale, toggleLocale } = useLocale();
+  const { locale, toggleLocale } = useLocaleStore();
+  const hasUnreadNews = useNotificationStore((state) => state.hasUnreadNews);
   const navigation = useNavigation<any>();
 
   return (
@@ -66,7 +68,7 @@ export function TabNavigator() {
             >
               <View style={styles.iconWrap}>
                 <Ionicons name="notifications-outline" size={22} color="#111827" />
-                <View style={styles.notificationDot} />
+                {hasUnreadNews && <View style={styles.notificationDot} />}
               </View>
             </TouchableOpacity>
           </View>

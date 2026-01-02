@@ -12,9 +12,9 @@ import {
 } from "react-native";
 
 import { getFieldErrorMessage } from "../../errors";
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
 import { OrderFormData, orderSchema } from "../../schemas";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { Instrument, OrderRequest } from "../../types";
 import { formatCurrency } from "../../utils/formatters";
 import { OrderTypeSelector } from "./OrderTypeSelector";
@@ -33,7 +33,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({
   onCancel,
   loading = false,
 }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const {
     control,

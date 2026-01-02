@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { Instrument } from "../../types";
 import { calculateReturn } from "../../utils/calculations";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
@@ -12,7 +12,7 @@ interface InstrumentCardProps {
 }
 
 export function InstrumentCard({ instrument, onPress }: InstrumentCardProps) {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const returnValue = calculateReturn(
     instrument.last_price,
