@@ -1,13 +1,12 @@
-import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react-native';
-import { LocaleProvider } from '@/src/i18n';
+import React, { ReactElement } from 'react';
 
 interface AllTheProvidersProps {
   children: React.ReactNode;
 }
 
 const AllTheProviders = ({ children }: AllTheProvidersProps) => {
-  return <LocaleProvider>{children}</LocaleProvider>;
+  return <>{children}</>;
 };
 
 const customRender = (

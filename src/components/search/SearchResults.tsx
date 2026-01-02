@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { Instrument } from "../../types";
 import { Loading } from "../common";
 import { InstrumentCard } from "../instruments";
@@ -20,7 +20,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   query,
   onResultPress,
 }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   if (loading) {
     return <Loading />;

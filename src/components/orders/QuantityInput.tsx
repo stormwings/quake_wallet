@@ -8,8 +8,9 @@ import {
   View,
 } from "react-native";
 
-import { useLocale } from "../../i18n";
 import { copy } from "../../i18n/copy";
+import { useLocaleStore } from "../../store/useLocaleStore";
+import { usePreferencesStore } from "../../store/usePreferencesStore";
 import { calculateQuantityFromAmount } from "../../utils/calculations";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -24,21 +25,21 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
   onQuantityChange,
   price,
 }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
-  const [inputMode, setInputMode] = useState<"quantity" | "amount">("quantity");
+  const { orderInputMode, setOrderInputMode } = usePreferencesStore();
   const [amountText, setAmountText] = useState("");
   const [quantityText, setQuantityText] = useState(
     quantity > 0 ? quantity.toString() : ""
   );
 
   const handleToggleMode = () => {
-    if (inputMode === "quantity") {
-      setInputMode("amount");
+    if (orderInputMode === "quantity") {
+      setOrderInputMode("amount");
       const amount = quantity * price;
       setAmountText(amount > 0 ? amount.toString() : "");
     } else {
-      setInputMode("quantity");
+      setOrderInputMode("quantity");
       setQuantityText(quantity > 0 ? quantity.toString() : "");
     }
   };
@@ -67,7 +68,7 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.label}>
-          {inputMode === "quantity"
+          {orderInputMode === "quantity"
             ? copy.orders.quantityInput.labelQuantity()
             : copy.orders.quantityInput.labelAmount()}
         </Text>
@@ -80,14 +81,14 @@ export const QuantityInput: React.FC<QuantityInputProps> = ({
         >
           <Ionicons name="swap-horizontal" size={14} color={TOKENS.primary} />
           <Text style={styles.toggleText}>
-            {inputMode === "quantity"
+            {orderInputMode === "quantity"
               ? copy.orders.quantityInput.toggleToAmount()
               : copy.orders.quantityInput.toggleToQuantity()}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {inputMode === "quantity" ? (
+      {orderInputMode === "quantity" ? (
         <View style={styles.inputWrap}>
           <TextInput
             testID="order-quantity-input"

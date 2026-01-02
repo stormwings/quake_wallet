@@ -1,34 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { OrderModal, SearchInput, SearchResults } from "../components";
 import { useDebounce } from "../hooks";
-import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
 import { useInstrumentSearch } from "../services/queries/useInstrumentSearch";
-import { Instrument } from "../types";
+import { useLocaleStore } from "../store/useLocaleStore";
+import { useOrderModalStore } from "../store/useOrderModalStore";
+import { useSearchHistoryStore } from "../store/useSearchHistoryStore";
 
 export default function SearchScreen() {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const [query, setQuery] = useState("");
-  const [selectedInstrument, setSelectedInstrument] =
-    useState<Instrument | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
   const debouncedQuery = useDebounce(query, 300);
 
-  // React Query handles loading, error, and data fetching automatically
-  const { data: results = [], isLoading: loading } = useInstrumentSearch(debouncedQuery);
+  const { isVisible, selectedInstrument, openModal, closeModal } =
+    useOrderModalStore();
 
-  const handleResultPress = (instrument: Instrument) => {
-    setSelectedInstrument(instrument);
-    setModalVisible(true);
-  };
+  const { addSearch } = useSearchHistoryStore();
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    setSelectedInstrument(null);
-  };
+  const { data: results = [], isLoading: loading } =
+    useInstrumentSearch(debouncedQuery);
+
+  useEffect(() => {
+    if (debouncedQuery) {
+      addSearch(debouncedQuery);
+    }
+  }, [debouncedQuery, addSearch]);
 
   return (
     <View testID="search-screen" style={styles.container}>
@@ -44,13 +42,13 @@ export default function SearchScreen() {
         results={results}
         loading={loading}
         query={debouncedQuery}
-        onResultPress={handleResultPress}
+        onResultPress={openModal}
       />
 
       <OrderModal
         key="search-order-modal"
-        visible={modalVisible}
-        onClose={handleCloseModal}
+        visible={isVisible}
+        onClose={closeModal}
         instrument={selectedInstrument}
       />
     </View>

@@ -1,12 +1,17 @@
-import React from 'react';
-import { render, fireEvent } from '../../test-utils';
 import { QuantityInput } from '@/src/components/orders/QuantityInput';
+import { usePreferencesStore } from '@/src/store/usePreferencesStore';
+import React from 'react';
+import { act, fireEvent, render, renderHook } from '../../test-utils';
 
 describe('QuantityInput', () => {
   const mockOnQuantityChange = jest.fn();
 
   beforeEach(() => {
     mockOnQuantityChange.mockClear();
+    const { result } = renderHook(() => usePreferencesStore());
+    act(() => {
+      result.current.setOrderInputMode('quantity');
+    });
   });
 
   describe('Rendering', () => {

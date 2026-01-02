@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useLocale } from "../../i18n";
+import { useLocaleStore } from "../../store/useLocaleStore";
 import { NewsArticle } from "../../types";
 
 interface NewsCardProps {
@@ -16,7 +16,7 @@ interface NewsCardProps {
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const handlePress = () => {
     Linking.openURL(article.url);
