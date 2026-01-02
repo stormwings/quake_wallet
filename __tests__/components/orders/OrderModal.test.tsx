@@ -1,12 +1,10 @@
-import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { LocaleProvider } from '@/src/i18n';
-import { OrderModal } from '@/src/components/orders/OrderModal';
-import { Instrument, OrderResponse } from '@/src/types';
 import { ReactQueryWrapper } from '@/__tests__/utils';
+import { OrderModal } from '@/src/components/orders/OrderModal';
+import { Instrument } from '@/src/types';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// Mock the useCreateOrderMutation hook
 const mockMutate = jest.fn();
 const mockReset = jest.fn();
 
@@ -31,16 +29,14 @@ const mockInstrument: Instrument = {
 
 const renderWithProvider = (component: React.ReactElement) => {
   return render(
-    <LocaleProvider>
-      <SafeAreaProvider
-        initialMetrics={{
-          frame: { x: 0, y: 0, width: 0, height: 0 },
-          insets: { top: 0, left: 0, right: 0, bottom: 0 },
-        }}
-      >
-        <ReactQueryWrapper>{component}</ReactQueryWrapper>
-      </SafeAreaProvider>
-    </LocaleProvider>
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { x: 0, y: 0, width: 0, height: 0 },
+        insets: { top: 0, left: 0, right: 0, bottom: 0 },
+      }}
+    >
+      <ReactQueryWrapper>{component}</ReactQueryWrapper>
+    </SafeAreaProvider>
   );
 };
 
@@ -136,18 +132,16 @@ describe('OrderModal', () => {
 
       // Remount with visible=true
       rerender(
-        <LocaleProvider>
-          <SafeAreaProvider
-            initialMetrics={{
-              frame: { x: 0, y: 0, width: 0, height: 0 },
-              insets: { top: 0, left: 0, right: 0, bottom: 0 },
-            }}
-          >
-            <ReactQueryWrapper>
-              <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
-            </ReactQueryWrapper>
-          </SafeAreaProvider>
-        </LocaleProvider>
+        <SafeAreaProvider
+          initialMetrics={{
+            frame: { x: 0, y: 0, width: 0, height: 0 },
+            insets: { top: 0, left: 0, right: 0, bottom: 0 },
+          }}
+        >
+          <ReactQueryWrapper>
+            <OrderModal visible={true} onClose={mockOnClose} instrument={mockInstrument} />
+          </ReactQueryWrapper>
+        </SafeAreaProvider>
       );
 
       // Should call reset when modal opens
