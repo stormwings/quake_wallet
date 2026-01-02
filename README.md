@@ -172,6 +172,12 @@ adb install path/to/app.apk
 
 ### Changelog
 
+#### [v1.5.0] - 2026-01-01
+##### Added
+- implement zustand to store managment
+#### Fixed
+- fixes some app warnings, removed useless comments
+
 #### [v1.4.0] - 2025-12-16
 ##### Added
 - implement news view
