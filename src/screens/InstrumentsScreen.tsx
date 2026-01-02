@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { ErrorMessage, InstrumentCard, Loading, OrderModal } from '../components';
 import { useInstrumentsQuery } from '../services/queries/useInstrumentsQuery';
-import { Instrument } from '../types';
+import { useOrderModalStore } from '../store/useOrderModalStore';
 
 export default function InstrumentsScreen() {
   const {
@@ -12,8 +12,8 @@ export default function InstrumentsScreen() {
     refetch,
   } = useInstrumentsQuery();
 
-  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const { isVisible, selectedInstrument, openModal, closeModal } =
+    useOrderModalStore();
 
   const handleRefresh = () => {
     refetch();
@@ -21,16 +21,6 @@ export default function InstrumentsScreen() {
 
   const handleRetry = () => {
     refetch();
-  };
-
-  const handleInstrumentPress = (instrument: Instrument) => {
-    setSelectedInstrument(instrument);
-    setModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    setSelectedInstrument(null);
   };
 
   if (loading && !instruments) {
@@ -49,25 +39,19 @@ export default function InstrumentsScreen() {
         data={instruments}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <InstrumentCard
-            instrument={item}
-            onPress={() => handleInstrumentPress(item)}
-          />
+          <InstrumentCard instrument={item} onPress={() => openModal(item)} />
         )}
         contentContainerStyle={styles.list}
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={handleRefresh}
-          />
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
         }
         showsVerticalScrollIndicator={false}
       />
 
       <OrderModal
         key="instruments-order-modal"
-        visible={modalVisible}
-        onClose={handleCloseModal}
+        visible={isVisible}
+        onClose={closeModal}
         instrument={selectedInstrument}
       />
     </View>

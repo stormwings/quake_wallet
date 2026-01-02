@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ErrorMessage, Loading, NewsList } from "../components";
-import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
 import { useNewsQuery } from "../services/queries/useNewsQuery";
+import { useLocaleStore } from "../store/useLocaleStore";
+import { useNotificationStore } from "../store/useNotificationStore";
 
 export default function NewsScreen() {
-  useLocale();
+  useLocaleStore((state) => state.locale);
+
+  const markNewsAsRead = useNotificationStore((state) => state.markNewsAsRead);
+
+  useEffect(() => {
+    markNewsAsRead();
+  }, [markNewsAsRead]);
 
   const {
     data: articles,

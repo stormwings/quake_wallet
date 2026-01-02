@@ -2,14 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ErrorMessage, Loading, PositionList } from "../components";
 import { getUserMessage } from "../errors";
-import { useLocale } from "../i18n";
 import { copy } from "../i18n/copy";
 import { usePortfolioQuery } from "../services/queries/usePortfolioQuery";
+import { useLocaleStore } from "../store/useLocaleStore";
 import { calculateMarketValue } from "../utils/calculations";
 import { formatCurrency } from "../utils/formatters";
 
 export default function PortfolioScreen() {
-  useLocale();
+  useLocaleStore((state) => state.locale);
 
   const {
     data: positions,
